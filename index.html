@@ -34,7 +34,7 @@
     .btn-area{
       position: relative;
       width: min(420px, 88vw);
-      height: 140px;
+      height: 190px;
       margin: 14px auto 0;
     }
     button{
@@ -63,7 +63,16 @@
       right: 10px;
       top: 48px;
     }
-    .hint{ margin-top: 10px; font-size: 12px; color: rgba(0,0,0,0.45); }
+        #maybe{
+      background: #e9e9e9;
+      color: #222;
+      position:absolute;
+      left: 50%;
+      top: 110px;
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+.hint{ margin-top: 10px; font-size: 12px; color: rgba(0,0,0,0.45); }
 
     /* écran final */
     .result{
@@ -71,7 +80,8 @@
       margin-top: 10px;
     }
     .result h2{ margin: 6px 0 10px; }
-    .result img{
+    .result img,
+    .result video{
       width: min(360px, 86vw);
       border-radius: 14px;
       border: 1px solid rgba(0,0,0,0.08);
@@ -82,42 +92,42 @@
 <body>
   <div class="card" id="card">
     <div class="icon">💘</div>
-    <h1><span id="name">Héléna</span>, tu veux être ma valentine ?</h1>
+    <h1>Joyeux anniversaire mi caracol, veux tu être ma valentine ?</h1>
     <p id="sub">Réponds honnêtement (mais choisis bien 😄).</p>
 
     <div class="btn-area" id="arena">
-      <button id="yes">Yes</button>
-      <button id="no" aria-label="No">No</button>
+      <button id="yes">Oui</button>
+      <button id="no" aria-label="Non">Non</button>
+      <button id="maybe" aria-label="Je sais pas">Je sais pas</button>
     </div>
 
-    <div class="hint" id="hint">Astuce : le “No” est… capricieux.</div>
+    <div class="hint" id="hint">Astuce : le “Non” et le “Je sais pas” sont… capricieux.</div>
 
     <div class="result" id="result">
       <h2>YAY! 🎉</h2>
-      <img id="pic" src="https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif" alt="Yay">
-      <div class="hint">Tu peux remplacer l’image/GIF par une photo à vous 🙂</div>
+      <video id="vid" src="Création_d_animation_GIF_Saint_Valentin_Vietnamienne.mp4" playsinline autoplay muted loop controls></video>
+      <div class="hint">Si tu veux le son, enlève le mute via le bouton volume/lecture.</div>
     </div>
   </div>
 
   <script>
     // Personnalisation rapide
-    const PERSON_NAME = "Héléna"; // ← change ici
-    document.getElementById("name").textContent = PERSON_NAME;
+    // (Tout est déjà écrit en dur dans le HTML)
 
     const arena = document.getElementById("arena");
     const noBtn  = document.getElementById("no");
+    const maybeBtn = document.getElementById("maybe");
     const yesBtn = document.getElementById("yes");
     const sub    = document.getElementById("sub");
     const result = document.getElementById("result");
 
     let tries = 0;
 
-    function moveNo() {
+    function moveBtn(btn) {
       const pad = 10;
 
-      // dimensions utiles
       const a = arena.getBoundingClientRect();
-      const b = noBtn.getBoundingClientRect();
+      const b = btn.getBoundingClientRect();
 
       const maxX = a.width  - b.width  - pad;
       const maxY = a.height - b.height - pad;
@@ -125,9 +135,11 @@
       const x = Math.max(pad, Math.floor(Math.random() * maxX));
       const y = Math.max(pad, Math.floor(Math.random() * maxY));
 
-      noBtn.style.left = x + "px";
-      noBtn.style.top  = y + "px";
-      noBtn.style.right = "auto";
+      // Si le bouton avait un transform en CSS (ex: centré), on l'annule avant de le déplacer
+      btn.style.transform = "none";
+      btn.style.left = x + "px";
+      btn.style.top  = y + "px";
+      btn.style.right = "auto";
     }
 
     function growYes() {
@@ -135,26 +147,28 @@
       yesBtn.style.transform = `scale(${scale})`;
     }
 
-    // Empêche le clic sur mobile + effet "fuite"
-    ["mouseenter","mouseover","touchstart","pointerdown"].forEach(evt => {
-      noBtn.addEventListener(evt, (e) => {
-        e.preventDefault();
-        tries++;
-        moveNo();
-        growYes();
-        if (tries === 2) sub.textContent = "Allez… réfléchis 😇";
-        if (tries === 4) sub.textContent = "C’est toujours “Yes” la bonne réponse.";
-        if (tries === 7) sub.textContent = "Ok, je rends le bouton Yes encore plus facile.";
-      }, { passive: false });
-    });
+    // Empêche le clic + effet "fuite" (Non + Je sais pas)
+    function updateSubText() {
+      if (tries === 2) sub.textContent = "Allez… réfléchis 😇";
+      if (tries === 4) sub.textContent = "Tu peux cliquer sur “Oui” quand tu veux.";
+      if (tries === 7) sub.textContent = "Ok, je rends le bouton “Oui” encore plus facile.";
+    }
 
-    // Si jamais il arrive à cliquer “No” (rare), on le fait quand même fuir
-    noBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      tries++;
-      moveNo();
-      growYes();
-    });
+    function setupDodge(btn) {
+      ["mouseenter","touchstart","pointerdown"].forEach(evt => {
+        btn.addEventListener(evt, (e) => {
+          e.preventDefault();
+          tries++;
+          moveBtn(btn);
+          growYes();
+          updateSubText();
+        }, { passive: false });
+      });
+    }
+
+    setupDodge(noBtn);
+    setupDodge(maybeBtn);
+
 
     yesBtn.addEventListener("click", () => {
       // Cache les boutons, affiche le résultat
@@ -162,12 +176,13 @@
       document.getElementById("hint").style.display = "none";
       sub.textContent = "";
       result.style.display = "block";
+      const vid = document.getElementById("vid");
+      if (vid) { vid.currentTime = 0; vid.play().catch(()=>{}); }
     });
 
-    // Place initiale du "No" (utile si l’écran est petit)
-    window.addEventListener("load", () => moveNo());
-    window.addEventListener("resize", () => moveNo());
+    // Place initiale du "Non" (utile si l’écran est petit)
+    window.addEventListener("load", () => moveBtn(noBtn));
+    window.addEventListener("resize", () => moveBtn(noBtn));
   </script>
 </body>
 </html>
-
