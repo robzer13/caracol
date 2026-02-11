@@ -498,8 +498,7 @@
       forceNoEscape(event.clientX || 0, event.clientY || 0);
     });
 
-    arena.addEventListener("touchstart", (event) => {
-      const touch = event.touches[0];
+    arena.addEventListener("touchstart", (event) => {      const touch = event.touches[0];
       if (!touch) return;
       event.preventDefault();
       forceNoEscape(touch.clientX, touch.clientY);
