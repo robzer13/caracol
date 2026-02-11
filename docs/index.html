@@ -85,8 +85,8 @@
 
     .btn-area {
       position: relative;
-      width: min(500px, 90vw);
-      height: 152px;
+      width: min(520px, 92vw);
+      height: 172px;
       margin: 16px auto 0;
       touch-action: none;
     }
@@ -95,9 +95,9 @@
       position: absolute;
       border: 0;
       border-radius: 999px;
-      min-width: 118px;
-      padding: 14px 22px;
-      font-size: 1rem;
+      min-width: 142px;
+      padding: 16px 30px;
+      font-size: 1.14rem;
       font-weight: 760;
       line-height: 1;
       cursor: pointer;
@@ -124,16 +124,16 @@
     }
 
     #yes {
-      left: 20%;
-      top: 66px;
+      left: 19%;
+      top: 72px;
       color: #fff;
       background: linear-gradient(135deg, var(--pink), var(--pink-2));
       transform-origin: center;
     }
 
     #no {
-      left: 62%;
-      top: 66px;
+      left: 63%;
+      top: 72px;
       color: #26262b;
       background: var(--gray-btn);
     }
@@ -219,8 +219,8 @@
     @media (max-width: 640px) {
       .card { padding: 20px 14px 16px; }
       .btn-area { height: 146px; }
-      .btn { min-width: 110px; padding: 13px 20px; }
-      #yes, #no { top: 62px; }
+      .btn { min-width: 126px; padding: 14px 24px; }
+      #yes, #no { top: 68px; }
     }
   </style>
 </head>
@@ -287,7 +287,7 @@
     }
 
     function setYesScale() {
-      const scale = 1 + Math.min(tries * 0.02, 0.15);
+      const scale = 1 + Math.min(tries * 0.03, 0.24);
       yesBtn.style.transform = `scale(${scale.toFixed(3)})`;
     }
 
@@ -302,18 +302,18 @@
       const yesRect = yesBtn.getBoundingClientRect();
       const noRect = noBtn.getBoundingClientRect();
 
-      const yesX = clamp(area.width * 0.30 - yesRect.width / 2, 10, area.width - yesRect.width - 10);
-      const noX = clamp(area.width * 0.72 - noRect.width / 2, 10, area.width - noRect.width - 10);
+      const yesX = clamp(area.width * 0.28 - yesRect.width / 2, 10, area.width - yesRect.width - 10);
+      const noX = clamp(area.width * 0.74 - noRect.width / 2, 10, area.width - noRect.width - 10);
 
       yesBtn.style.left = `${yesX}px`;
-      yesBtn.style.top = "66px";
+      yesBtn.style.top = "72px";
 
       noCurrent.x = noX;
-      noCurrent.y = 66;
+      noCurrent.y = 72;
       noTarget.x = noX;
-      noTarget.y = 66;
+      noTarget.y = 72;
       noBtn.style.left = `${noX}px`;
-      noBtn.style.top = "66px";
+      noBtn.style.top = "72px";
       noBtn.style.transform = "rotate(0deg)";
     }
 
@@ -327,9 +327,9 @@
       const dirY = centerY - referenceY;
       const norm = Math.hypot(dirX, dirY) || 1;
 
-      const push = 80 + Math.random() * 40;
-      const jitterX = (Math.random() - 0.5) * 30;
-      const jitterY = (Math.random() - 0.5) * 24;
+      const push = 130 + Math.random() * 70;
+      const jitterX = (Math.random() - 0.5) * 42;
+      const jitterY = (Math.random() - 0.5) * 34;
 
       const nextX = centerX + (dirX / norm) * push + jitterX - btnW / 2;
       const nextY = centerY + (dirY / norm) * push + jitterY - btnH / 2;
@@ -448,18 +448,25 @@
     }
 
     function tryPlayVideo() {
-      vid.play().then(() => {
+      vid.muted = true;
+      vid.playsInline = true;
+      const attempt = vid.play();
+      if (attempt && typeof attempt.then === "function") {
+        attempt.then(() => {
+          playBtn.style.display = "none";
+        }).catch(() => {
+          playBtn.style.display = "inline-block";
+        });
+      } else if (!vid.paused) {
         playBtn.style.display = "none";
-      }).catch(() => {
-        playBtn.style.display = "inline-block";
-      });
+      }
     }
 
     arena.addEventListener("pointermove", (event) => {
       const noRect = noBtn.getBoundingClientRect();
       const dx = event.clientX - (noRect.left + noRect.width / 2);
       const dy = event.clientY - (noRect.top + noRect.height / 2);
-      if (Math.hypot(dx, dy) < 118) {
+      if (Math.hypot(dx, dy) < 170) {
         evadeFromPoint(event.clientX, event.clientY);
       }
     }, { passive: true });
@@ -484,7 +491,7 @@
       const noRect = noBtn.getBoundingClientRect();
       const dx = touch.clientX - (noRect.left + noRect.width / 2);
       const dy = touch.clientY - (noRect.top + noRect.height / 2);
-      if (Math.hypot(dx, dy) < 126) {
+      if (Math.hypot(dx, dy) < 180) {
         event.preventDefault();
         evadeFromPoint(touch.clientX, touch.clientY);
       }
@@ -499,7 +506,9 @@
       videoError.style.display = "none";
       vid.src = VIDEO_FILE;
       vid.load();
-      setTimeout(tryPlayVideo, 250);
+      tryPlayVideo();
+      setTimeout(tryPlayVideo, 120);
+      setTimeout(tryPlayVideo, 450);
     });
 
     playBtn.addEventListener("click", tryPlayVideo);
@@ -507,6 +516,9 @@
     vid.addEventListener("play", () => {
       playBtn.style.display = "none";
     });
+
+    vid.addEventListener("loadedmetadata", tryPlayVideo);
+    vid.addEventListener("canplay", tryPlayVideo);
 
     vid.addEventListener("error", () => {
       videoError.style.display = "block";
