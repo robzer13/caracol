@@ -241,9 +241,9 @@
 
     <section class="result" id="result" aria-live="polite">
       <h2>VAMOOOOOOS! 🎉</h2>
-      <video id="vid" src="valentine.mp4" controls playsinline preload="metadata" muted autoplay loop></video>
+      <video id="vid" src="../valentine.mp4" controls playsinline preload="metadata" muted autoplay loop></video>
       <button class="btn" id="playBtn" type="button">▶ Lancer la vidéo</button>
-      <p id="videoError">Impossible de charger la vidéo. Vérifie que l’URL <code>valentine.mp4</code> est correcte.</p>
+      <p id="videoError">Impossible de charger la vidéo. Vérifie que l’URL <code>../valentine.mp4</code> est correcte.</p>
     </section>
   </main>
 
@@ -262,7 +262,7 @@
     const card = document.getElementById("card");
     const icon = document.getElementById("icon");
 
-    const VIDEO_FILE = "valentine.mp4";
+    const VIDEO_FILE = "../valentine.mp4";
 
     let tries = 0;
     let pulseStopped = false;
