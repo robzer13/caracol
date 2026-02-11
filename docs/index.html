@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Question importante</title>
+  <style>
+    :root {
+      --bg-top: #f6e8ff;
+      --bg-bottom: #ffddea;
+      --card: rgba(255, 255, 255, 0.9);
+      --text: #1f1f24;
+      --muted: rgba(31, 31, 36, 0.64);
+      --pink: #e91e63;
+      --pink-2: #ff4a90;
+      --gray-btn: #ececf1;
+      --radius: 22px;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top, var(--bg-top), var(--bg-bottom));
+      user-select: none;
+      overflow: hidden;
+    }
+
+    .card {
+      position: relative;
+      width: min(620px, 95vw);
+      border-radius: var(--radius);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: var(--card);
+      box-shadow: 0 24px 56px rgba(0, 0, 0, 0.14);
+      padding: 24px 18px 20px;
+      text-align: center;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    #confettiCanvas {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .icon {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 10px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      font-size: 32px;
+      background: rgba(233, 30, 99, 0.12);
+      transition: transform 300ms var(--ease);
+    }
+
+    #mainTitle {
+      margin: 8px 0 8px;
+      font-size: clamp(1.55rem, 4.8vw, 2rem);
+      line-height: 1.24;
+      font-weight: 780;
+      letter-spacing: -0.01em;
+      transition: opacity 240ms var(--ease);
+    }
+
+    #sub {
+      margin: 0;
+      color: var(--muted);
+      transition: opacity 220ms var(--ease);
+    }
+
+    .btn-area {
+      position: relative;
+      width: min(500px, 90vw);
+      height: 152px;
+      margin: 16px auto 0;
+      touch-action: none;
+    }
+
+    .btn {
+      position: absolute;
+      border: 0;
+      border-radius: 999px;
+      min-width: 118px;
+      padding: 14px 22px;
+      font-size: 1rem;
+      font-weight: 760;
+      line-height: 1;
+      cursor: pointer;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+      transition:
+        transform 200ms var(--ease),
+        box-shadow 200ms var(--ease),
+        opacity 220ms var(--ease);
+      will-change: left, top, transform;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px) scale(1.02);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.16);
+    }
+
+    .btn:active {
+      transform: translateY(0) scale(0.985);
+    }
+
+    .btn:focus-visible {
+      outline: 3px solid rgba(233, 30, 99, 0.3);
+      outline-offset: 2px;
+    }
+
+    #yes {
+      left: 20%;
+      top: 66px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--pink), var(--pink-2));
+      transform-origin: center;
+    }
+
+    #no {
+      left: 62%;
+      top: 66px;
+      color: #26262b;
+      background: var(--gray-btn);
+    }
+
+    .yes-pulse {
+      animation: yesPulse 2.6s var(--ease) infinite;
+    }
+
+    @keyframes yesPulse {
+      0%, 100% {
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12), 0 0 0 0 rgba(233, 30, 99, 0);
+      }
+      50% {
+        box-shadow: 0 14px 28px rgba(233, 30, 99, 0.26), 0 0 0 10px rgba(233, 30, 99, 0);
+      }
+    }
+
+    #hint {
+      margin: 6px 0 0;
+      color: rgba(31, 31, 36, 0.48);
+      font-size: 0.84rem;
+      transition: opacity 220ms var(--ease), transform 220ms var(--ease);
+    }
+
+    .fade-away {
+      opacity: 0;
+      transform: translateY(-10px);
+      pointer-events: none;
+    }
+
+    .result {
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      margin-top: 16px;
+      transition: opacity 420ms var(--ease), transform 420ms var(--ease);
+    }
+
+    .result.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .result h2 {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 5.8vw, 2.4rem);
+      color: #cf1c58;
+      line-height: 1.1;
+      letter-spacing: 0.01em;
+    }
+
+    #vid {
+      width: min(540px, 92vw);
+      border-radius: 14px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.16);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 480ms var(--ease), transform 480ms var(--ease);
+    }
+
+    .result.show #vid {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #playBtn {
+      position: static;
+      display: none;
+      margin: 12px auto 0;
+      color: #fff;
+      background: var(--pink);
+    }
+
+    #videoError {
+      display: none;
+      margin: 10px 0 0;
+      font-size: 0.84rem;
+      color: #9f1f27;
+    }
+
+    @media (max-width: 640px) {
+      .card { padding: 20px 14px 16px; }
+      .btn-area { height: 146px; }
+      .btn { min-width: 110px; padding: 13px 20px; }
+      #yes, #no { top: 62px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="card" id="card">
+    <canvas id="confettiCanvas" aria-hidden="true"></canvas>
+
+    <div class="icon" id="icon">💘</div>
+    <h1 id="mainTitle">Joyeux anniversaire mi caracol, veux tu être ma valentine ?</h1>
+    <p id="sub">Réponds honnêtement (mais choisis bien).</p>
+
+    <section class="btn-area" id="arena" aria-label="Choix de réponse">
+      <button class="btn yes-pulse" id="yes" aria-label="Oui">Oui</button>
+      <button class="btn" id="no" aria-label="Non">Non</button>
+    </section>
+
+    <p id="hint">Astuce : “Non” est… capricieux.</p>
+
+    <section class="result" id="result" aria-live="polite">
+      <h2>VAMOOOOOOS! 🎉</h2>
+      <video id="vid" src="../valentine.mp4" controls playsinline preload="metadata" muted autoplay loop></video>
+      <button class="btn" id="playBtn" type="button">▶ Lancer la vidéo</button>
+      <p id="videoError">Impossible de charger la vidéo. Vérifie que l’URL <code>../valentine.mp4</code> est correcte.</p>
+    </section>
+  </main>
+
+  <script>
+    const arena = document.getElementById("arena");
+    const yesBtn = document.getElementById("yes");
+    const noBtn = document.getElementById("no");
+    const mainTitle = document.getElementById("mainTitle");
+    const sub = document.getElementById("sub");
+    const hint = document.getElementById("hint");
+    const result = document.getElementById("result");
+    const vid = document.getElementById("vid");
+    const playBtn = document.getElementById("playBtn");
+    const videoError = document.getElementById("videoError");
+    const confettiCanvas = document.getElementById("confettiCanvas");
+    const card = document.getElementById("card");
+    const icon = document.getElementById("icon");
+
+    const VIDEO_FILE = "../valentine.mp4";
+
+    let tries = 0;
+    let pulseStopped = false;
+    let noCurrent = { x: 0, y: 0 };
+    let noTarget = { x: 0, y: 0 };
+    let noAnimating = false;
+    let wiggleUntil = 0;
+
+    function clamp(v, min, max) {
+      return Math.max(min, Math.min(max, v));
+    }
+
+    function lerp(a, b, t) {
+      return a + (b - a) * t;
+    }
+
+    function stopYesPulse() {
+      if (!pulseStopped) {
+        pulseStopped = true;
+        yesBtn.classList.remove("yes-pulse");
+      }
+    }
+
+    function setYesScale() {
+      const scale = 1 + Math.min(tries * 0.02, 0.15);
+      yesBtn.style.transform = `scale(${scale.toFixed(3)})`;
+    }
+
+    function getArenaMetrics() {
+      const area = arena.getBoundingClientRect();
+      const noRect = noBtn.getBoundingClientRect();
+      return { width: area.width, height: area.height, btnW: noRect.width, btnH: noRect.height };
+    }
+
+    function setupInitialPositions() {
+      const area = arena.getBoundingClientRect();
+      const yesRect = yesBtn.getBoundingClientRect();
+      const noRect = noBtn.getBoundingClientRect();
+
+      const yesX = clamp(area.width * 0.30 - yesRect.width / 2, 10, area.width - yesRect.width - 10);
+      const noX = clamp(area.width * 0.72 - noRect.width / 2, 10, area.width - noRect.width - 10);
+
+      yesBtn.style.left = `${yesX}px`;
+      yesBtn.style.top = "66px";
+
+      noCurrent.x = noX;
+      noCurrent.y = 66;
+      noTarget.x = noX;
+      noTarget.y = 66;
+      noBtn.style.left = `${noX}px`;
+      noBtn.style.top = "66px";
+      noBtn.style.transform = "rotate(0deg)";
+    }
+
+    function setTargetPosition(referenceX, referenceY) {
+      const pad = 10;
+      const { width, height, btnW, btnH } = getArenaMetrics();
+
+      const centerX = noCurrent.x + btnW / 2;
+      const centerY = noCurrent.y + btnH / 2;
+      const dirX = centerX - referenceX;
+      const dirY = centerY - referenceY;
+      const norm = Math.hypot(dirX, dirY) || 1;
+
+      const push = 80 + Math.random() * 40;
+      const jitterX = (Math.random() - 0.5) * 30;
+      const jitterY = (Math.random() - 0.5) * 24;
+
+      const nextX = centerX + (dirX / norm) * push + jitterX - btnW / 2;
+      const nextY = centerY + (dirY / norm) * push + jitterY - btnH / 2;
+
+      noTarget.x = clamp(nextX, pad, width - btnW - pad);
+      noTarget.y = clamp(nextY, pad, height - btnH - pad);
+      wiggleUntil = performance.now() + 220;
+
+      if (!noAnimating) {
+        noAnimating = true;
+        requestAnimationFrame(moveNoSmooth);
+      }
+    }
+
+    function moveNoSmooth() {
+      const dx = noTarget.x - noCurrent.x;
+      const dy = noTarget.y - noCurrent.y;
+      noCurrent.x = lerp(noCurrent.x, noTarget.x, 0.2);
+      noCurrent.y = lerp(noCurrent.y, noTarget.y, 0.2);
+
+      const now = performance.now();
+      const wiggle = now < wiggleUntil ? Math.sin(now * 0.04) * 2 : 0;
+      noBtn.style.left = `${noCurrent.x}px`;
+      noBtn.style.top = `${noCurrent.y}px`;
+      noBtn.style.transform = `rotate(${wiggle.toFixed(2)}deg)`;
+
+      if (Math.abs(dx) > 0.7 || Math.abs(dy) > 0.7) {
+        requestAnimationFrame(moveNoSmooth);
+      } else {
+        noCurrent.x = noTarget.x;
+        noCurrent.y = noTarget.y;
+        noBtn.style.left = `${noCurrent.x}px`;
+        noBtn.style.top = `${noCurrent.y}px`;
+        noBtn.style.transform = "rotate(0deg)";
+        noAnimating = false;
+      }
+    }
+
+    function evadeFromPoint(clientX, clientY) {
+      if (result.classList.contains("show")) return;
+      stopYesPulse();
+      tries += 1;
+      setYesScale();
+      setTargetPosition(clientX, clientY);
+
+      if (tries === 2) sub.textContent = "Allez… réfléchis 😇";
+      if (tries === 5) sub.textContent = "Objectivement, “Oui” est la bonne réponse.";
+      if (tries === 8) sub.textContent = "Tu sais ce qu’il faut cliquer 👀";
+    }
+
+    function confettiBurst() {
+      const ctx = confettiCanvas.getContext("2d", { alpha: true });
+      const rect = card.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+
+      confettiCanvas.width = Math.floor(rect.width * dpr);
+      confettiCanvas.height = Math.floor(rect.height * dpr);
+      confettiCanvas.style.width = `${rect.width}px`;
+      confettiCanvas.style.height = `${rect.height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const colors = ["#e91e63", "#ff8eb9", "#ffd166", "#8ce99a", "#7bdff2", "#c77dff"];
+      const parts = Array.from({ length: 84 }, () => ({
+        x: rect.width * (0.35 + Math.random() * 0.3),
+        y: rect.height * 0.28,
+        w: 4 + Math.random() * 4,
+        h: 7 + Math.random() * 7,
+        vx: (Math.random() - 0.5) * 7,
+        vy: -4.6 - Math.random() * 5,
+        g: 0.18 + Math.random() * 0.1,
+        rot: Math.random() * Math.PI,
+        vr: (Math.random() - 0.5) * 0.2,
+        life: 64 + Math.random() * 26,
+        color: colors[Math.floor(Math.random() * colors.length)],
+      }));
+
+      let frame = 0;
+      function tick() {
+        ctx.clearRect(0, 0, rect.width, rect.height);
+        for (const p of parts) {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += p.g;
+          p.vx *= 0.992;
+          p.rot += p.vr;
+          p.life -= 1;
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.globalAlpha = Math.max(0, p.life / 90);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        }
+
+        frame += 1;
+        if (frame < 95) requestAnimationFrame(tick);
+        else ctx.clearRect(0, 0, rect.width, rect.height);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    function transitionToFinal() {
+      arena.classList.add("fade-away");
+      hint.classList.add("fade-away");
+      icon.style.transform = "scale(1.06)";
+      mainTitle.textContent = "Je t’aime mi pulgitilla";
+      sub.textContent = "";
+
+      setTimeout(() => {
+        arena.style.display = "none";
+        hint.style.display = "none";
+        result.classList.add("show");
+      }, 220);
+    }
+
+    function tryPlayVideo() {
+      vid.play().then(() => {
+        playBtn.style.display = "none";
+      }).catch(() => {
+        playBtn.style.display = "inline-block";
+      });
+    }
+
+    arena.addEventListener("pointermove", (event) => {
+      const noRect = noBtn.getBoundingClientRect();
+      const dx = event.clientX - (noRect.left + noRect.width / 2);
+      const dy = event.clientY - (noRect.top + noRect.height / 2);
+      if (Math.hypot(dx, dy) < 118) {
+        evadeFromPoint(event.clientX, event.clientY);
+      }
+    }, { passive: true });
+
+    noBtn.addEventListener("pointerenter", (event) => {
+      evadeFromPoint(event.clientX, event.clientY);
+    });
+
+    noBtn.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      evadeFromPoint(event.clientX, event.clientY);
+    }, { passive: false });
+
+    noBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      evadeFromPoint(event.clientX || 0, event.clientY || 0);
+    });
+
+    arena.addEventListener("touchstart", (event) => {
+      const touch = event.touches[0];
+      if (!touch) return;
+      const noRect = noBtn.getBoundingClientRect();
+      const dx = touch.clientX - (noRect.left + noRect.width / 2);
+      const dy = touch.clientY - (noRect.top + noRect.height / 2);
+      if (Math.hypot(dx, dy) < 126) {
+        event.preventDefault();
+        evadeFromPoint(touch.clientX, touch.clientY);
+      }
+    }, { passive: false });
+
+    yesBtn.addEventListener("pointerdown", stopYesPulse, { passive: true });
+
+    yesBtn.addEventListener("click", () => {
+      stopYesPulse();
+      confettiBurst();
+      transitionToFinal();
+      videoError.style.display = "none";
+      vid.src = VIDEO_FILE;
+      vid.load();
+      setTimeout(tryPlayVideo, 250);
+    });
+
+    playBtn.addEventListener("click", tryPlayVideo);
+
+    vid.addEventListener("play", () => {
+      playBtn.style.display = "none";
+    });
+
+    vid.addEventListener("error", () => {
+      videoError.style.display = "block";
+      playBtn.style.display = "none";
+    });
+
+    window.addEventListener("load", setupInitialPositions);
+    window.addEventListener("resize", setupInitialPositions);
+  </script>
+</body>
+</html>
