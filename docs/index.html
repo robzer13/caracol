@@ -211,6 +211,10 @@
       color: #9f1f27;
     }
 
+    body > main:not(#card) {
+      display: none !important;
+    }
+
     @media (max-width: 640px) {
       .card { padding: 20px 14px 16px; }
       .btn-area { height: 146px; }
@@ -225,7 +229,7 @@
 
     <div class="icon" id="icon">💘</div>
     <h1 id="mainTitle">Joyeux anniversaire mi caracol, veux tu être ma valentine ?</h1>
-    <p id="sub">Réponds honnêtement (mais choisis bien).</p>
+    <p id="sub">Allez hop, esquive de la loutre 🦦</p>
 
     <section class="btn-area" id="arena" aria-label="Choix de réponse">
       <button class="btn yes-pulse" id="yes" aria-label="Oui">Oui</button>
@@ -242,6 +246,65 @@
   </main>
 
   <script>
+    // Hard cleanup in case old duplicated markup is still present after a bad deploy/cache.
+    (function cleanupDuplicateDom() {
+      const cards = Array.from(document.querySelectorAll("main.card"));
+      if (cards.length > 1) {
+        cards.slice(0, -1).forEach((cardNode) => cardNode.remove());
+      }
+
+      const legacyMaybeButtons = Array.from(document.querySelectorAll("button"))
+        .filter((btn) => btn.textContent && btn.textContent.trim().toLowerCase() === "je sais pas");
+      legacyMaybeButtons.forEach((btn) => {
+        const legacyContainer = btn.closest("main, section, article, .card, div");
+        if (legacyContainer && legacyContainer.id !== "card") {
+          legacyContainer.remove();
+        } else {
+          btn.remove();
+        }
+      });
+
+      const legacyHints = Array.from(document.querySelectorAll("p, div, span"))
+        .filter((el) => {
+          const text = (el.textContent || "").toLowerCase();
+          return text.includes("astuce") || text.includes("je rends le bouton oui");
+        });
+      legacyHints.forEach((el) => {
+        if (el.closest("#card")) return;
+        const legacyContainer = el.closest("main, section, article, .card, div");
+        if (legacyContainer && legacyContainer.id !== "card") {
+          legacyContainer.remove();
+        } else {
+          el.remove();
+        }
+      });
+    })();
+
+    function enforceSingleCleanCard() {
+      const cards = Array.from(document.querySelectorAll("main.card"));
+      if (cards.length > 1) {
+        cards.slice(0, -1).forEach((node) => node.remove());
+      }
+
+      const currentCard = document.getElementById("card");
+      if (!currentCard) return;
+
+      const badButtons = Array.from(currentCard.querySelectorAll("button"))
+        .filter((btn) => {
+          const txt = (btn.textContent || "").trim().toLowerCase();
+          return txt && txt !== "oui" && txt !== "non" && !txt.includes("lancer la vidéo");
+        });
+      badButtons.forEach((btn) => btn.remove());
+
+      const badTexts = Array.from(currentCard.querySelectorAll("p, div, span"))
+        .filter((el) => {
+          if (el.id === "sub" || el.id === "videoError") return false;
+          const text = (el.textContent || "").toLowerCase();
+          return text.includes("astuce") || text.includes("je sais pas") || text.includes("je rends le bouton oui");
+        });
+      badTexts.forEach((el) => el.remove());
+    }
+
     const arena = document.getElementById("arena");
     const yesBtn = document.getElementById("yes");
     const noBtn = document.getElementById("no");
@@ -387,10 +450,6 @@
         tries += 1;
         lastTryAt = now;
         setYesScale();
-        if (tries === 3) sub.textContent = "Allez hop, esquive de la loute 🦦";
-        if (tries === 8) sub.textContent = "Allez… réfléchis 😇";
-        if (tries === 14) sub.textContent = "Objectivement, “Oui” est la bonne réponse.";
-        if (tries === 22) sub.textContent = "Tu sais ce qu’il faut cliquer 👀";
       }
       keepNoMoving();
     }
@@ -627,8 +686,10 @@
     });
 
     window.addEventListener("load", () => {
+      enforceSingleCleanCard();
       setupInitialPositions();
       startNoDrift();
+      setInterval(enforceSingleCleanCard, 1200);
     });
     window.addEventListener("resize", () => {
       setupInitialPositions();
