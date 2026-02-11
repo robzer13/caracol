@@ -262,6 +262,7 @@
     let noAnimating = false;
     let wiggleUntil = 0;
     let lastEvadeAt = 0;
+    let evadeBurstTimer = null;
 
     function clamp(v, min, max) {
       return Math.max(min, Math.min(max, v));
@@ -360,12 +361,7 @@
       }
     }
 
-    function evadeFromPoint(clientX, clientY) {
-      if (result.classList.contains("show")) return;
-      const now = performance.now();
-      if (now - lastEvadeAt < 110) return;
-      lastEvadeAt = now;
-
+    function moveNoAway(clientX, clientY) {
       stopYesPulse();
       tries += 1;
       setYesScale();
@@ -374,6 +370,32 @@
       if (tries === 2) sub.textContent = "Allez… réfléchis 😇";
       if (tries === 5) sub.textContent = "Objectivement, “Oui” est la bonne réponse.";
       if (tries === 8) sub.textContent = "Tu sais ce qu’il faut cliquer 👀";
+    }
+
+    function evadeFromPoint(clientX, clientY) {
+      if (result.classList.contains("show")) return;
+      const now = performance.now();
+      if (now - lastEvadeAt < 45) return;
+      lastEvadeAt = now;
+      moveNoAway(clientX, clientY);
+    }
+
+    function forceNoEscape(clientX, clientY) {
+      if (result.classList.contains("show")) return;
+      if (evadeBurstTimer) {
+        clearTimeout(evadeBurstTimer);
+      }
+      moveNoAway(clientX, clientY);
+      let step = 0;
+      const burst = () => {
+        if (result.classList.contains("show")) return;
+        step += 1;
+        moveNoAway(clientX + (Math.random() - 0.5) * 90, clientY + (Math.random() - 0.5) * 70);
+        if (step < 3) {
+          evadeBurstTimer = setTimeout(burst, 55);
+        }
+      };
+      evadeBurstTimer = setTimeout(burst, 55);
     }
 
     function confettiBurst() {
@@ -461,24 +483,26 @@
     }, { passive: true });
 
     noBtn.addEventListener("pointerenter", (event) => {
-      evadeFromPoint(event.clientX, event.clientY);
+      forceNoEscape(event.clientX, event.clientY);
     });
 
     noBtn.addEventListener("pointerdown", (event) => {
       event.preventDefault();
-      evadeFromPoint(event.clientX, event.clientY);
+      event.stopPropagation();
+      forceNoEscape(event.clientX, event.clientY);
     }, { passive: false });
 
     noBtn.addEventListener("click", (event) => {
       event.preventDefault();
-      evadeFromPoint(event.clientX || 0, event.clientY || 0);
+      event.stopPropagation();
+      forceNoEscape(event.clientX || 0, event.clientY || 0);
     });
 
     arena.addEventListener("touchstart", (event) => {
       const touch = event.touches[0];
       if (!touch) return;
       event.preventDefault();
-      evadeFromPoint(touch.clientX, touch.clientY);
+      forceNoEscape(touch.clientX, touch.clientY);
     }, { passive: false });
 
     yesBtn.addEventListener("pointerdown", stopYesPulse, { passive: true });
