@@ -322,6 +322,7 @@
       noBtn.style.left = `${noX}px`;
       noBtn.style.top = "72px";
       noBtn.style.transform = "rotate(0deg)";
+      noBtn.style.pointerEvents = "none";
     }
 
     function setTargetPosition(referenceX, referenceY) {
@@ -373,6 +374,7 @@
         noBtn.style.left = `${noCurrent.x}px`;
         noBtn.style.top = `${noCurrent.y}px`;
         noBtn.style.transform = "rotate(0deg)";
+        noBtn.style.pointerEvents = "none";
         noAnimating = false;
       }
     }
