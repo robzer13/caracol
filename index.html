@@ -6,19 +6,16 @@
   <title>Question importante</title>
   <style>
     :root {
-      --bg-a: #ffe3ef;
-      --bg-b: #f5ebff;
-      --surface: rgba(255, 255, 255, 0.88);
-      --surface-border: rgba(20, 20, 20, 0.08);
+      --bg-top: #f6e8ff;
+      --bg-bottom: #ffddea;
+      --card: rgba(255, 255, 255, 0.9);
       --text: #1f1f24;
-      --muted: rgba(31, 31, 36, 0.62);
+      --muted: rgba(31, 31, 36, 0.64);
       --pink: #e91e63;
-      --pink-2: #ff4f93;
-      --soft-gray: #ececf1;
-      --danger: #9f1f27;
-      --shadow: 0 24px 64px rgba(20, 20, 20, 0.14);
-      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-      --ease-soft: cubic-bezier(0.25, 0.9, 0.3, 1);
+      --pink-2: #ff4a90;
+      --gray-btn: #ececf1;
+      --radius: 22px;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     * {
@@ -34,20 +31,19 @@
       padding: 18px;
       font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color: var(--text);
-      background: radial-gradient(circle at 50% -20%, var(--bg-b), var(--bg-a));
-      overflow: hidden;
+      background: radial-gradient(circle at top, var(--bg-top), var(--bg-bottom));
       user-select: none;
+      overflow: hidden;
     }
 
     .card {
       position: relative;
       width: min(620px, 95vw);
-      border-radius: 24px;
-      border: 1px solid var(--surface-border);
-      background: var(--surface);
-      backdrop-filter: blur(6px);
-      box-shadow: var(--shadow);
-      padding: 26px 22px 22px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: var(--card);
+      box-shadow: 0 24px 56px rgba(0, 0, 0, 0.14);
+      padding: 24px 18px 20px;
       text-align: center;
       overflow: hidden;
       isolation: isolate;
@@ -67,32 +63,31 @@
       border-radius: 999px;
       display: grid;
       place-items: center;
-      background: rgba(233, 30, 99, 0.12);
       font-size: 32px;
-      transition: transform 340ms var(--ease-out);
+      background: rgba(233, 30, 99, 0.12);
+      transition: transform 300ms var(--ease);
     }
 
     #mainTitle {
       margin: 8px 0 8px;
-      font-size: clamp(1.65rem, 3.4vw, 2rem);
+      font-size: clamp(1.55rem, 4.8vw, 2rem);
       line-height: 1.24;
-      letter-spacing: -0.012em;
       font-weight: 780;
-      transition: transform 280ms var(--ease-out), opacity 280ms var(--ease-out);
+      letter-spacing: -0.01em;
+      transition: opacity 240ms var(--ease);
     }
 
     #sub {
       margin: 0;
       color: var(--muted);
-      font-size: 1.03rem;
-      transition: opacity 240ms var(--ease-out);
+      transition: opacity 220ms var(--ease);
     }
 
     .btn-area {
-      width: min(500px, 88vw);
+      position: relative;
+      width: min(500px, 90vw);
       height: 152px;
       margin: 16px auto 0;
-      position: relative;
       touch-action: none;
     }
 
@@ -100,24 +95,23 @@
       position: absolute;
       border: 0;
       border-radius: 999px;
-      padding: 14px 24px;
-      min-width: 120px;
+      min-width: 118px;
+      padding: 14px 22px;
       font-size: 1rem;
       font-weight: 760;
       line-height: 1;
       cursor: pointer;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
       transition:
-        transform 220ms var(--ease-soft),
-        box-shadow 220ms var(--ease-soft),
-        background 200ms var(--ease-soft),
-        opacity 220ms var(--ease-soft);
-      will-change: transform, left, top;
-      box-shadow: 0 10px 24px rgba(16, 16, 16, 0.12);
+        transform 200ms var(--ease),
+        box-shadow 200ms var(--ease),
+        opacity 220ms var(--ease);
+      will-change: left, top, transform;
     }
 
     .btn:hover {
       transform: translateY(-1px) scale(1.02);
-      box-shadow: 0 14px 30px rgba(16, 16, 16, 0.14);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.16);
     }
 
     .btn:active {
@@ -125,43 +119,43 @@
     }
 
     .btn:focus-visible {
-      outline: 3px solid rgba(233, 30, 99, 0.28);
+      outline: 3px solid rgba(233, 30, 99, 0.3);
       outline-offset: 2px;
     }
 
     #yes {
       left: 20%;
       top: 66px;
-      transform-origin: center;
       color: #fff;
       background: linear-gradient(135deg, var(--pink), var(--pink-2));
+      transform-origin: center;
     }
 
     #no {
       left: 62%;
       top: 66px;
-      color: #25252a;
-      background: var(--soft-gray);
+      color: #26262b;
+      background: var(--gray-btn);
     }
 
     .yes-pulse {
-      animation: yesPulse 2.7s var(--ease-soft) infinite;
+      animation: yesPulse 2.6s var(--ease) infinite;
     }
 
     @keyframes yesPulse {
       0%, 100% {
-        box-shadow: 0 10px 24px rgba(16, 16, 16, 0.12), 0 0 0 0 rgba(233, 30, 99, 0);
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12), 0 0 0 0 rgba(233, 30, 99, 0);
       }
       50% {
-        box-shadow: 0 16px 30px rgba(233, 30, 99, 0.25), 0 0 0 11px rgba(233, 30, 99, 0);
+        box-shadow: 0 14px 28px rgba(233, 30, 99, 0.26), 0 0 0 10px rgba(233, 30, 99, 0);
       }
     }
 
     #hint {
       margin: 6px 0 0;
-      color: rgba(31, 31, 36, 0.45);
+      color: rgba(31, 31, 36, 0.48);
       font-size: 0.84rem;
-      transition: opacity 220ms var(--ease-out), transform 220ms var(--ease-out);
+      transition: opacity 220ms var(--ease), transform 220ms var(--ease);
     }
 
     .fade-away {
@@ -172,10 +166,10 @@
 
     .result {
       opacity: 0;
-      transform: translateY(14px);
+      transform: translateY(12px);
       pointer-events: none;
       margin-top: 16px;
-      transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out);
+      transition: opacity 420ms var(--ease), transform 420ms var(--ease);
     }
 
     .result.show {
@@ -186,20 +180,20 @@
 
     .result h2 {
       margin: 0 0 12px;
-      font-size: clamp(2rem, 5vw, 2.4rem);
+      font-size: clamp(2rem, 5.8vw, 2.4rem);
+      color: #cf1c58;
       line-height: 1.1;
       letter-spacing: 0.01em;
-      color: #cd1e59;
     }
 
     #vid {
       width: min(540px, 92vw);
       border-radius: 14px;
       border: 1px solid rgba(0, 0, 0, 0.08);
-      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.16);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.16);
       opacity: 0;
       transform: translateY(8px);
-      transition: opacity 520ms var(--ease-out), transform 520ms var(--ease-out);
+      transition: opacity 480ms var(--ease), transform 480ms var(--ease);
     }
 
     .result.show #vid {
@@ -218,17 +212,15 @@
     #videoError {
       display: none;
       margin: 10px 0 0;
-      color: var(--danger);
       font-size: 0.84rem;
+      color: #9f1f27;
     }
 
     @media (max-width: 640px) {
-      .card { padding: 20px 14px 16px; border-radius: 20px; }
+      .card { padding: 20px 14px 16px; }
       .btn-area { height: 146px; }
-      .btn { min-width: 112px; padding: 13px 20px; }
+      .btn { min-width: 110px; padding: 13px 20px; }
       #yes, #no { top: 62px; }
-      #mainTitle { font-size: clamp(1.45rem, 7vw, 1.85rem); }
-      #sub { font-size: 0.98rem; }
     }
   </style>
 </head>
@@ -295,28 +287,23 @@
     }
 
     function setYesScale() {
-      const scale = 1 + Math.min(tries * 0.022, 0.15);
+      const scale = 1 + Math.min(tries * 0.02, 0.15);
       yesBtn.style.transform = `scale(${scale.toFixed(3)})`;
     }
 
     function getArenaMetrics() {
-      const areaRect = arena.getBoundingClientRect();
+      const area = arena.getBoundingClientRect();
       const noRect = noBtn.getBoundingClientRect();
-      return {
-        width: areaRect.width,
-        height: areaRect.height,
-        btnW: noRect.width,
-        btnH: noRect.height,
-      };
+      return { width: area.width, height: area.height, btnW: noRect.width, btnH: noRect.height };
     }
 
     function setupInitialPositions() {
-      const areaRect = arena.getBoundingClientRect();
+      const area = arena.getBoundingClientRect();
       const yesRect = yesBtn.getBoundingClientRect();
       const noRect = noBtn.getBoundingClientRect();
 
-      const yesX = clamp(areaRect.width * 0.30 - yesRect.width / 2, 12, areaRect.width - yesRect.width - 12);
-      const noX = clamp(areaRect.width * 0.72 - noRect.width / 2, 12, areaRect.width - noRect.width - 12);
+      const yesX = clamp(area.width * 0.30 - yesRect.width / 2, 10, area.width - yesRect.width - 10);
+      const noX = clamp(area.width * 0.72 - noRect.width / 2, 10, area.width - noRect.width - 10);
 
       yesBtn.style.left = `${yesX}px`;
       yesBtn.style.top = "66px";
@@ -327,6 +314,7 @@
       noTarget.y = 66;
       noBtn.style.left = `${noX}px`;
       noBtn.style.top = "66px";
+      noBtn.style.transform = "rotate(0deg)";
     }
 
     function setTargetPosition(referenceX, referenceY) {
@@ -339,7 +327,7 @@
       const dirY = centerY - referenceY;
       const norm = Math.hypot(dirX, dirY) || 1;
 
-      const push = 84 + Math.random() * 42;
+      const push = 80 + Math.random() * 40;
       const jitterX = (Math.random() - 0.5) * 30;
       const jitterY = (Math.random() - 0.5) * 24;
 
@@ -389,7 +377,7 @@
 
       if (tries === 2) sub.textContent = "Allez… réfléchis 😇";
       if (tries === 5) sub.textContent = "Objectivement, “Oui” est la bonne réponse.";
-      if (tries === 8) sub.textContent = "Le “Oui” est juste là 👀";
+      if (tries === 8) sub.textContent = "Tu sais ce qu’il faut cliquer 👀";
     }
 
     function confettiBurst() {
@@ -410,11 +398,11 @@
         w: 4 + Math.random() * 4,
         h: 7 + Math.random() * 7,
         vx: (Math.random() - 0.5) * 7,
-        vy: -4.8 - Math.random() * 5,
+        vy: -4.6 - Math.random() * 5,
         g: 0.18 + Math.random() * 0.1,
         rot: Math.random() * Math.PI,
         vr: (Math.random() - 0.5) * 0.2,
-        life: 65 + Math.random() * 28,
+        life: 64 + Math.random() * 26,
         color: colors[Math.floor(Math.random() * colors.length)],
       }));
 
@@ -476,14 +464,14 @@
       }
     }, { passive: true });
 
+    noBtn.addEventListener("pointerenter", (event) => {
+      evadeFromPoint(event.clientX, event.clientY);
+    });
+
     noBtn.addEventListener("pointerdown", (event) => {
       event.preventDefault();
       evadeFromPoint(event.clientX, event.clientY);
     }, { passive: false });
-
-    noBtn.addEventListener("pointerenter", (event) => {
-      evadeFromPoint(event.clientX, event.clientY);
-    });
 
     noBtn.addEventListener("click", (event) => {
       event.preventDefault();
@@ -491,14 +479,14 @@
     });
 
     arena.addEventListener("touchstart", (event) => {
-      const t = event.touches[0];
-      if (!t) return;
+      const touch = event.touches[0];
+      if (!touch) return;
       const noRect = noBtn.getBoundingClientRect();
-      const dx = t.clientX - (noRect.left + noRect.width / 2);
-      const dy = t.clientY - (noRect.top + noRect.height / 2);
+      const dx = touch.clientX - (noRect.left + noRect.width / 2);
+      const dy = touch.clientY - (noRect.top + noRect.height / 2);
       if (Math.hypot(dx, dy) < 126) {
         event.preventDefault();
-        evadeFromPoint(t.clientX, t.clientY);
+        evadeFromPoint(touch.clientX, touch.clientY);
       }
     }, { passive: false });
 
