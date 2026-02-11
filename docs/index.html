@@ -129,7 +129,6 @@
       color: #fff;
       background: linear-gradient(135deg, var(--pink), var(--pink-2));
       transform-origin: center;
-      z-index: 2;
     }
 
     #no {
@@ -137,7 +136,6 @@
       top: 72px;
       color: #26262b;
       background: var(--gray-btn);
-      z-index: 1;
     }
 
     .yes-pulse {
@@ -265,7 +263,6 @@
     let wiggleUntil = 0;
     let lastEvadeAt = 0;
     let evadeBurstTimer = null;
-    let noDriftTimer = null;
 
     function clamp(v, min, max) {
       return Math.max(min, Math.min(max, v));
@@ -290,15 +287,7 @@
     function getArenaMetrics() {
       const area = arena.getBoundingClientRect();
       const noRect = noBtn.getBoundingClientRect();
-      const yesRect = yesBtn.getBoundingClientRect();
-      return {
-        width: area.width,
-        height: area.height,
-        btnW: noRect.width,
-        btnH: noRect.height,
-        yesW: yesRect.width,
-        yesX: yesBtn.offsetLeft,
-      };
+      return { width: area.width, height: area.height, btnW: noRect.width, btnH: noRect.height };
     }
 
     function setupInitialPositions() {
@@ -323,7 +312,7 @@
 
     function setTargetPosition(referenceX, referenceY) {
       const pad = 10;
-      const { width, height, btnW, btnH, yesW, yesX } = getArenaMetrics();
+      const { width, height, btnW, btnH } = getArenaMetrics();
 
       const centerX = noCurrent.x + btnW / 2;
       const centerY = noCurrent.y + btnH / 2;
@@ -338,9 +327,7 @@
       const nextX = centerX + (dirX / norm) * push + jitterX - btnW / 2;
       const nextY = centerY + (dirY / norm) * push + jitterY - btnH / 2;
 
-      const yesKeepoutRight = yesX + yesW + 18;
-      const safeMinX = Math.max(pad, yesKeepoutRight);
-      noTarget.x = clamp(nextX, safeMinX, width - btnW - pad);
+      noTarget.x = clamp(nextX, pad, width - btnW - pad);
       noTarget.y = clamp(nextY, pad, height - btnH - pad);
       wiggleUntil = performance.now() + 220;
 
@@ -411,32 +398,6 @@
       evadeBurstTimer = setTimeout(burst, 55);
     }
 
-    function randomArenaPoint() {
-      const rect = arena.getBoundingClientRect();
-      return {
-        x: rect.left + rect.width * (0.68 + Math.random() * 0.28),
-        y: rect.top + rect.height * (0.25 + Math.random() * 0.55),
-      };
-    }
-
-    function keepNoMoving() {
-      if (result.classList.contains("show")) return;
-      const p = randomArenaPoint();
-      setTargetPosition(p.x, p.y);
-    }
-
-    function startNoDrift() {
-      if (noDriftTimer) clearInterval(noDriftTimer);
-      noDriftTimer = setInterval(keepNoMoving, 260);
-    }
-
-    function stopNoDrift() {
-      if (noDriftTimer) {
-        clearInterval(noDriftTimer);
-        noDriftTimer = null;
-      }
-    }
-
     function confettiBurst() {
       const ctx = confettiCanvas.getContext("2d", { alpha: true });
       const rect = card.getBoundingClientRect();
@@ -491,7 +452,6 @@
     }
 
     function transitionToFinal() {
-      stopNoDrift();
       arena.classList.add("fade-away");
       icon.style.transform = "scale(1.06)";
       mainTitle.textContent = "Je t’aime mi pulgitilla";
@@ -518,19 +478,6 @@
       }
     }
 
-    function onYesChosen() {
-      if (result.classList.contains("show")) return;
-      stopYesPulse();
-      confettiBurst();
-      transitionToFinal();
-      videoError.style.display = "none";
-      vid.src = VIDEO_FILE;
-      vid.load();
-      tryPlayVideo();
-      setTimeout(tryPlayVideo, 120);
-      setTimeout(tryPlayVideo, 450);
-    }
-
     arena.addEventListener("pointermove", (event) => {
       evadeFromPoint(event.clientX, event.clientY);
     }, { passive: true });
@@ -552,8 +499,6 @@
     });
 
     arena.addEventListener("touchstart", (event) => {
-      const target = event.target;
-      if (target === yesBtn || yesBtn.contains(target)) return;
       const touch = event.touches[0];
       if (!touch) return;
       event.preventDefault();
@@ -561,18 +506,18 @@
     }, { passive: false });
 
     yesBtn.addEventListener("pointerdown", stopYesPulse, { passive: true });
-    yesBtn.addEventListener("pointerup", onYesChosen);
-    yesBtn.addEventListener("touchstart", (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      onYesChosen();
-    }, { passive: false });
-    yesBtn.addEventListener("touchend", (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      onYesChosen();
-    }, { passive: false });
-    yesBtn.addEventListener("click", onYesChosen);
+
+    yesBtn.addEventListener("click", () => {
+      stopYesPulse();
+      confettiBurst();
+      transitionToFinal();
+      videoError.style.display = "none";
+      vid.src = VIDEO_FILE;
+      vid.load();
+      tryPlayVideo();
+      setTimeout(tryPlayVideo, 120);
+      setTimeout(tryPlayVideo, 450);
+    });
 
     playBtn.addEventListener("click", tryPlayVideo);
 
@@ -588,10 +533,7 @@
       playBtn.style.display = "none";
     });
 
-    window.addEventListener("load", () => {
-      setupInitialPositions();
-      startNoDrift();
-    });
+    window.addEventListener("load", setupInitialPositions);
     window.addEventListener("resize", setupInitialPositions);
   </script>
 </body>
