@@ -151,13 +151,6 @@
       }
     }
 
-    #hint {
-      margin: 6px 0 0;
-      color: rgba(31, 31, 36, 0.48);
-      font-size: 0.84rem;
-      transition: opacity 220ms var(--ease), transform 220ms var(--ease);
-    }
-
     .fade-away {
       opacity: 0;
       transform: translateY(-10px);
@@ -237,7 +230,6 @@
       <button class="btn" id="no" aria-label="Non">Non</button>
     </section>
 
-    <p id="hint">Astuce : “Non” est… capricieux.</p>
 
     <section class="result" id="result" aria-live="polite">
       <h2>VAMOOOOOOS! 🎉</h2>
@@ -253,7 +245,6 @@
     const noBtn = document.getElementById("no");
     const mainTitle = document.getElementById("mainTitle");
     const sub = document.getElementById("sub");
-    const hint = document.getElementById("hint");
     const result = document.getElementById("result");
     const vid = document.getElementById("vid");
     const playBtn = document.getElementById("playBtn");
@@ -270,6 +261,7 @@
     let noTarget = { x: 0, y: 0 };
     let noAnimating = false;
     let wiggleUntil = 0;
+    let lastEvadeAt = 0;
 
     function clamp(v, min, max) {
       return Math.max(min, Math.min(max, v));
@@ -370,6 +362,10 @@
 
     function evadeFromPoint(clientX, clientY) {
       if (result.classList.contains("show")) return;
+      const now = performance.now();
+      if (now - lastEvadeAt < 110) return;
+      lastEvadeAt = now;
+
       stopYesPulse();
       tries += 1;
       setYesScale();
@@ -435,14 +431,12 @@
 
     function transitionToFinal() {
       arena.classList.add("fade-away");
-      hint.classList.add("fade-away");
       icon.style.transform = "scale(1.06)";
       mainTitle.textContent = "Je t’aime mi pulgitilla";
       sub.textContent = "";
 
       setTimeout(() => {
         arena.style.display = "none";
-        hint.style.display = "none";
         result.classList.add("show");
       }, 220);
     }
@@ -463,12 +457,7 @@
     }
 
     arena.addEventListener("pointermove", (event) => {
-      const noRect = noBtn.getBoundingClientRect();
-      const dx = event.clientX - (noRect.left + noRect.width / 2);
-      const dy = event.clientY - (noRect.top + noRect.height / 2);
-      if (Math.hypot(dx, dy) < 170) {
-        evadeFromPoint(event.clientX, event.clientY);
-      }
+      evadeFromPoint(event.clientX, event.clientY);
     }, { passive: true });
 
     noBtn.addEventListener("pointerenter", (event) => {
@@ -488,13 +477,8 @@
     arena.addEventListener("touchstart", (event) => {
       const touch = event.touches[0];
       if (!touch) return;
-      const noRect = noBtn.getBoundingClientRect();
-      const dx = touch.clientX - (noRect.left + noRect.width / 2);
-      const dy = touch.clientY - (noRect.top + noRect.height / 2);
-      if (Math.hypot(dx, dy) < 180) {
-        event.preventDefault();
-        evadeFromPoint(touch.clientX, touch.clientY);
-      }
+      event.preventDefault();
+      evadeFromPoint(touch.clientX, touch.clientY);
     }, { passive: false });
 
     yesBtn.addEventListener("pointerdown", stopYesPulse, { passive: true });
