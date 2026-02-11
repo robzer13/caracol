@@ -242,25 +242,6 @@
   </main>
 
   <script>
-    // Hard cleanup in case old duplicated markup is still present after a bad deploy/cache.
-    (function cleanupDuplicateDom() {
-      const cards = Array.from(document.querySelectorAll("main.card"));
-      if (cards.length > 1) {
-        cards.slice(0, -1).forEach((cardNode) => cardNode.remove());
-      }
-
-      const legacyMaybeButtons = Array.from(document.querySelectorAll("button"))
-        .filter((btn) => btn.textContent && btn.textContent.trim().toLowerCase() === "je sais pas");
-      legacyMaybeButtons.forEach((btn) => btn.remove());
-
-      const legacyHints = Array.from(document.querySelectorAll("p, div, span"))
-        .filter((el) => {
-          const text = (el.textContent || "").toLowerCase();
-          return text.includes("astuce") || text.includes("je rends le bouton oui");
-        });
-      legacyHints.forEach((el) => el.remove());
-    })();
-
     const arena = document.getElementById("arena");
     const yesBtn = document.getElementById("yes");
     const noBtn = document.getElementById("no");
