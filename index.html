@@ -5,186 +5,517 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Question importante</title>
   <style>
-    :root { --pink:#e91e63; --bg1:#ffd6e7; --bg2:#f7e8ff; }
-    * { box-sizing: border-box; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
-    body{
-      margin:0; min-height:100vh; display:grid; place-items:center;
-      background: radial-gradient(circle at top, var(--bg2), var(--bg1));
-      padding: 20px;
+    :root {
+      --pink: #e91e63;
+      --pink-dark: #cf1454;
+      --bg1: #ffd6e7;
+      --bg2: #f7e8ff;
+      --text: #1d1d1f;
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-spring: cubic-bezier(0.2, 0.8, 0.2, 1.15);
     }
-    .card{
-      width:min(560px, 92vw);
-      background: rgba(255,255,255,0.88);
-      border: 1px solid rgba(0,0,0,0.06);
-      border-radius: 18px;
-      padding: 22px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.12);
-      text-align:center;
-      position: relative;
-    }
-    .icon{
-      width: 72px; height:72px; margin: 0 auto 10px;
-      border-radius: 50%;
-      display:grid; place-items:center;
-      background: rgba(233,30,99,0.12);
-      font-size: 34px;
-    }
-    h1{ font-size: 22px; margin: 8px 0 6px; font-weight: 750; }
-    p{ margin: 0 0 12px; color: rgba(0,0,0,0.65); }
 
-    .btn-area{
-      position: relative;
-      width: min(460px, 88vw);
-      height: 160px;
-      margin: 14px auto 0;
-    }
-    button{
-      border:0; cursor:pointer;
-      padding: 14px 22px;
-      border-radius: 999px;
-      font-weight: 750;
-      font-size: 16px;
-      box-shadow: 0 10px 22px rgba(0,0,0,0.10);
-      transition: transform 120ms ease;
-      user-select:none;
+    * {
+      box-sizing: border-box;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       -webkit-tap-highlight-color: transparent;
-      position:absolute;
-      top: 60px;
+      user-select: none;
     }
-    #yes{
-      background: var(--pink);
-      color:white;
-      left: 10px;
-      transform-origin: left center;
-      padding: 16px 26px;
-      font-size: 18px;
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      color: var(--text);
+      background: radial-gradient(circle at top, var(--bg2), var(--bg1));
+      overflow: hidden;
     }
-    #no{
-      background: #e9e9e9;
+
+    .card {
+      width: min(580px, 94vw);
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .icon {
+      width: 74px;
+      height: 74px;
+      margin: 0 auto 12px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(233, 30, 99, 0.12);
+      font-size: 34px;
+      transition: transform 320ms var(--ease-out);
+    }
+
+    h1 {
+      margin: 8px 0 8px;
+      font-size: clamp(21px, 4.6vw, 28px);
+      line-height: 1.25;
+      font-weight: 780;
+      letter-spacing: -0.01em;
+      transition: transform 360ms var(--ease-out), opacity 320ms var(--ease-out);
+    }
+
+    p {
+      margin: 0 0 12px;
+      color: rgba(0, 0, 0, 0.62);
+    }
+
+    .btn-area {
+      position: relative;
+      width: min(500px, 90vw);
+      height: 168px;
+      margin: 16px auto 0;
+      touch-action: none;
+    }
+
+    .btn {
+      border: 0;
+      cursor: pointer;
+      border-radius: 999px;
+      font-weight: 760;
+      font-size: 16px;
+      padding: 14px 24px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+      transition:
+        transform 220ms var(--ease-spring),
+        box-shadow 220ms var(--ease-out),
+        background 200ms var(--ease-out),
+        opacity 260ms var(--ease-out);
+      position: absolute;
+      outline: none;
+    }
+
+    .btn:focus-visible {
+      box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.32), 0 12px 26px rgba(0, 0, 0, 0.14);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px) scale(1.025);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.14);
+    }
+
+    .btn:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    #yes {
+      left: 12px;
+      top: 72px;
+      transform-origin: center;
+      background: linear-gradient(135deg, var(--pink), #ff4f91);
+      color: white;
+      min-width: 124px;
+    }
+
+    #no {
+      top: 72px;
+      right: 12px;
+      background: #efefef;
       color: #222;
-      right: 10px;
-    }
-    #maybe{
-      background: #f2f2f2;
-      color:#222;
-      left: 50%;
-      transform: translateX(-50%);
-      top: 10px;
-      padding: 12px 18px;
-      font-size: 14px;
+      min-width: 124px;
+      will-change: transform, left, top;
     }
 
-    .hint{ margin-top: 10px; font-size: 12px; color: rgba(0,0,0,0.45); }
-
-    .result{
-      display:none;
-      margin-top: 12px;
+    .yes-pulse {
+      animation: pulseYes 2.6s var(--ease-out) infinite;
     }
-    .result h2{ margin: 6px 0 10px; }
-    video{
-      width: min(520px, 92vw);
+
+    @keyframes pulseYes {
+      0%, 100% { box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12), 0 0 0 0 rgba(233, 30, 99, 0); }
+      50% { box-shadow: 0 14px 30px rgba(233, 30, 99, 0.24), 0 0 0 10px rgba(233, 30, 99, 0); }
+    }
+
+    .hint {
+      margin-top: 10px;
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.45);
+      transition: opacity 250ms var(--ease-out);
+    }
+
+    .result {
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      margin-top: 18px;
+      transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out);
+    }
+
+    .result.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .result h2 {
+      margin: 2px 0 14px;
+      font-size: clamp(28px, 6vw, 40px);
+      line-height: 1.05;
+      letter-spacing: 0.02em;
+      color: var(--pink-dark);
+    }
+
+    video {
+      width: min(530px, 92vw);
       border-radius: 14px;
-      border: 1px solid rgba(0,0,0,0.08);
-      box-shadow: 0 14px 40px rgba(0,0,0,0.14);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.16);
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out);
+    }
+
+    .result.show video {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .play-button {
+      position: static;
+      display: none;
+      margin: 12px auto 0;
+      background: var(--pink);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .error {
+      display: none;
+      margin-top: 10px;
+      color: #9b1c1c;
+      font-size: 13px;
+    }
+
+    .fade-away {
+      opacity: 0;
+      transform: translateY(-10px);
+      pointer-events: none;
+    }
+
+    #confettiCanvas {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    @media (max-width: 620px) {
+      .card { padding: 18px; }
+      .btn-area { height: 162px; }
+      #yes, #no { top: 70px; min-width: 114px; }
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="icon">💘</div>
-    <h1>Joyeux anniversaire mi caracol, veux tu être ma valentine ?</h1>
+  <div class="card" id="card">
+    <canvas id="confettiCanvas" aria-hidden="true"></canvas>
+    <div class="icon" id="icon">💘</div>
+    <h1 id="mainTitle">Joyeux anniversaire mi caracol, veux tu être ma valentine ?</h1>
     <p id="sub">Réponds honnêtement (mais choisis bien).</p>
 
-    <div class="btn-area" id="arena">
-      <button id="yes">Oui</button>
-      <button id="no" aria-label="Non">Non</button>
-      <button id="maybe" aria-label="Je sais pas">Je sais pas</button>
+    <div class="btn-area" id="arena" aria-label="Choix de réponse">
+      <button class="btn yes-pulse" id="yes" aria-label="Oui">Oui</button>
+      <button class="btn" id="no" aria-label="Non">Non</button>
     </div>
 
-    <div class="hint" id="hint">Astuce : “Non” et “Je sais pas” sont… capricieux.</div>
+    <div class="hint" id="hint">Astuce : “Non” est… capricieux.</div>
 
-    <div class="result" id="result">
-      <h2>YAY! 🎉</h2>
-      <video id="vid" playsinline autoplay muted loop controls></video>
-      <div class="hint">Si tu veux le son : active le volume dans le lecteur.</div>
+    <div class="result" id="result" aria-live="polite">
+      <h2>VAMOOOOOOS! 🎉</h2>
+      <video id="vid" src="valentine.mp4" controls playsinline preload="metadata" muted autoplay loop></video>
+      <button class="btn play-button" id="playBtn" type="button">▶ Lancer la vidéo</button>
+      <p class="error" id="videoError">Impossible de charger la vidéo. Vérifie que l'URL <code>valentine.mp4</code> est correcte et disponible.</p>
     </div>
   </div>
 
   <script>
     const arena = document.getElementById("arena");
-    const noBtn  = document.getElementById("no");
-    const maybeBtn = document.getElementById("maybe");
+    const noBtn = document.getElementById("no");
     const yesBtn = document.getElementById("yes");
-    const sub    = document.getElementById("sub");
+    const mainTitle = document.getElementById("mainTitle");
+    const sub = document.getElementById("sub");
+    const hint = document.getElementById("hint");
     const result = document.getElementById("result");
-    const vid    = document.getElementById("vid");
+    const vid = document.getElementById("vid");
+    const playBtn = document.getElementById("playBtn");
+    const videoError = document.getElementById("videoError");
+    const confettiCanvas = document.getElementById("confettiCanvas");
+    const icon = document.getElementById("icon");
 
-    // Nom de fichier vidéo (ASCII recommandé pour éviter les soucis iPhone/URL)
     const VIDEO_FILE = "valentine.mp4";
 
     let tries = 0;
+    let hasInteracted = false;
+    let noTarget = { x: 0, y: 0 };
+    let noCurrent = { x: 0, y: 0 };
+    let noAnimating = false;
+    let wiggleEnd = 0;
 
-    function randomPos(btn){
-      const pad = 10;
-      const a = arena.getBoundingClientRect();
-      const b = btn.getBoundingClientRect();
-      const maxX = a.width  - b.width  - pad;
-      const maxY = a.height - b.height - pad;
-
-      const x = Math.max(pad, Math.floor(Math.random() * maxX));
-      const y = Math.max(pad, Math.floor(Math.random() * maxY));
-
-      btn.style.left = x + "px";
-      btn.style.top  = y + "px";
-      btn.style.right = "auto";
-      btn.style.transform = "none";
+    function clamp(v, min, max) {
+      return Math.max(min, Math.min(max, v));
     }
 
-    function growYes() {
-      const scale = 1 + Math.min(tries, 10) * 0.09;
-      yesBtn.style.transform = `scale(${scale})`;
+    function lerp(a, b, t) {
+      return a + (b - a) * t;
     }
 
-    function evade(btn, e){
-      if (e) e.preventDefault();
-      tries++;
-      randomPos(btn);
-      growYes();
+    function setYesScale() {
+      const scale = 1 + Math.min(tries * 0.025, 0.15);
+      yesBtn.style.transform = `scale(${scale.toFixed(3)})`;
+    }
+
+    function stopPulseOnInteraction() {
+      if (!hasInteracted) {
+        hasInteracted = true;
+        yesBtn.classList.remove("yes-pulse");
+      }
+    }
+
+    function getArenaMetrics() {
+      const areaRect = arena.getBoundingClientRect();
+      const noRect = noBtn.getBoundingClientRect();
+      return {
+        width: areaRect.width,
+        height: areaRect.height,
+        btnW: noRect.width,
+        btnH: noRect.height,
+      };
+    }
+
+    function setTargetPosition(referenceX, referenceY) {
+      const pad = 12;
+      const { width, height, btnW, btnH } = getArenaMetrics();
+
+      const centerX = noCurrent.x + btnW / 2;
+      const centerY = noCurrent.y + btnH / 2;
+
+      const dirX = centerX - referenceX;
+      const dirY = centerY - referenceY;
+      const norm = Math.hypot(dirX, dirY) || 1;
+      const repel = 86 + Math.random() * 44;
+
+      const jitterX = (Math.random() - 0.5) * 38;
+      const jitterY = (Math.random() - 0.5) * 30;
+
+      const targetX = centerX + (dirX / norm) * repel + jitterX - btnW / 2;
+      const targetY = centerY + (dirY / norm) * repel + jitterY - btnH / 2;
+
+      noTarget.x = clamp(targetX, pad, width - btnW - pad);
+      noTarget.y = clamp(targetY, pad, height - btnH - pad);
+      wiggleEnd = performance.now() + 220;
+
+      if (!noAnimating) {
+        noAnimating = true;
+        requestAnimationFrame(moveNoSmooth);
+      }
+    }
+
+    function moveNoSmooth() {
+      const dx = noTarget.x - noCurrent.x;
+      const dy = noTarget.y - noCurrent.y;
+      noCurrent.x = lerp(noCurrent.x, noTarget.x, 0.18);
+      noCurrent.y = lerp(noCurrent.y, noTarget.y, 0.18);
+
+      const now = performance.now();
+      const wiggle = now < wiggleEnd ? Math.sin(now * 0.04) * 2 : 0;
+      noBtn.style.left = `${noCurrent.x}px`;
+      noBtn.style.top = `${noCurrent.y}px`;
+      noBtn.style.transform = `rotate(${wiggle.toFixed(2)}deg)`;
+
+      if (Math.abs(dx) > 0.7 || Math.abs(dy) > 0.7) {
+        requestAnimationFrame(moveNoSmooth);
+      } else {
+        noCurrent.x = noTarget.x;
+        noCurrent.y = noTarget.y;
+        noBtn.style.left = `${noCurrent.x}px`;
+        noBtn.style.top = `${noCurrent.y}px`;
+        noBtn.style.transform = "rotate(0deg)";
+        noAnimating = false;
+      }
+    }
+
+    function evadeFromPoint(clientX, clientY) {
+      stopPulseOnInteraction();
+      tries += 1;
+      setTargetPosition(clientX, clientY);
+      setYesScale();
+
       if (tries === 2) sub.textContent = "Allez… réfléchis 😇";
-      if (tries === 4) sub.textContent = "Objectivement, “Oui” est la meilleure réponse.";
-      if (tries === 7) sub.textContent = "Ok, je rends le bouton Oui encore plus facile.";
+      if (tries === 5) sub.textContent = "Promis, “Oui” est une excellente réponse.";
+      if (tries === 8) sub.textContent = "Tu peux cliquer “Oui” 😌";
     }
 
-    ["mouseenter","mouseover","touchstart","pointerdown"].forEach(evt => {
-      noBtn.addEventListener(evt, (e) => evade(noBtn, e), { passive:false });
-      maybeBtn.addEventListener(evt, (e) => evade(maybeBtn, e), { passive:false });
+    function tryPlayVideo() {
+      vid.play().then(() => {
+        playBtn.style.display = "none";
+      }).catch(() => {
+        playBtn.style.display = "inline-block";
+      });
+    }
+
+    function confettiBurst() {
+      const ctx = confettiCanvas.getContext("2d", { alpha: true });
+      const cardRect = document.getElementById("card").getBoundingClientRect();
+      confettiCanvas.width = Math.floor(cardRect.width * devicePixelRatio);
+      confettiCanvas.height = Math.floor(cardRect.height * devicePixelRatio);
+      confettiCanvas.style.width = `${cardRect.width}px`;
+      confettiCanvas.style.height = `${cardRect.height}px`;
+      ctx.scale(devicePixelRatio, devicePixelRatio);
+
+      const colors = ["#e91e63", "#ff9ec4", "#ffd166", "#7bdff2", "#c77dff", "#8cff98"];
+      const particles = Array.from({ length: 90 }, () => ({
+        x: cardRect.width / 2,
+        y: cardRect.height * 0.30,
+        w: 5 + Math.random() * 5,
+        h: 8 + Math.random() * 8,
+        vx: (Math.random() - 0.5) * 8,
+        vy: -5 - Math.random() * 6,
+        g: 0.20 + Math.random() * 0.11,
+        life: 65 + Math.random() * 30,
+        rot: Math.random() * Math.PI,
+        vr: (Math.random() - 0.5) * 0.24,
+        color: colors[Math.floor(Math.random() * colors.length)],
+      }));
+
+      let frame = 0;
+      function tick() {
+        ctx.clearRect(0, 0, cardRect.width, cardRect.height);
+        for (const p of particles) {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += p.g;
+          p.vx *= 0.992;
+          p.rot += p.vr;
+          p.life -= 1;
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = Math.max(0, p.life / 90);
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        }
+
+        frame += 1;
+        if (frame < 100) {
+          requestAnimationFrame(tick);
+        } else {
+          ctx.clearRect(0, 0, cardRect.width, cardRect.height);
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+
+    function transitionToFinal() {
+      arena.classList.add("fade-away");
+      hint.classList.add("fade-away");
+      icon.style.transform = "scale(1.06)";
+      mainTitle.textContent = "Je t’aime mi pulgitilla";
+      sub.textContent = "";
+
+      setTimeout(() => {
+        arena.style.display = "none";
+        hint.style.display = "none";
+        result.classList.add("show");
+      }, 230);
+    }
+
+    function setupInitialPositions() {
+      const areaRect = arena.getBoundingClientRect();
+      const noRect = noBtn.getBoundingClientRect();
+      const yesRect = yesBtn.getBoundingClientRect();
+
+      yesBtn.style.left = `${Math.max(12, (areaRect.width * 0.23) - yesRect.width / 2)}px`;
+      yesBtn.style.top = "72px";
+
+      noCurrent.x = Math.max(12, (areaRect.width * 0.74) - noRect.width / 2);
+      noCurrent.y = 72;
+      noTarget.x = noCurrent.x;
+      noTarget.y = noCurrent.y;
+
+      noBtn.style.left = `${noCurrent.x}px`;
+      noBtn.style.top = `${noCurrent.y}px`;
+      noBtn.style.right = "auto";
+    }
+
+    arena.addEventListener("pointermove", (e) => {
+      if (result.classList.contains("show")) return;
+      const noRect = noBtn.getBoundingClientRect();
+      const dx = e.clientX - (noRect.left + noRect.width / 2);
+      const dy = e.clientY - (noRect.top + noRect.height / 2);
+      const dist = Math.hypot(dx, dy);
+      if (dist < 120) {
+        evadeFromPoint(e.clientX, e.clientY);
+      }
+    }, { passive: true });
+
+    noBtn.addEventListener("pointerenter", (e) => {
+      if (result.classList.contains("show")) return;
+      evadeFromPoint(e.clientX, e.clientY);
     });
 
-    // Au cas où un click passe
-    noBtn.addEventListener("click", (e) => evade(noBtn, e));
-    maybeBtn.addEventListener("click", (e) => evade(maybeBtn, e));
+    noBtn.addEventListener("pointerdown", (e) => {
+      e.preventDefault();
+      if (result.classList.contains("show")) return;
+      evadeFromPoint(e.clientX, e.clientY);
+    }, { passive: false });
+
+    arena.addEventListener("touchstart", (e) => {
+      if (result.classList.contains("show")) return;
+      const touch = e.touches[0];
+      if (!touch) return;
+      const noRect = noBtn.getBoundingClientRect();
+      const dx = touch.clientX - (noRect.left + noRect.width / 2);
+      const dy = touch.clientY - (noRect.top + noRect.height / 2);
+      if (Math.hypot(dx, dy) < 130) {
+        e.preventDefault();
+        evadeFromPoint(touch.clientX, touch.clientY);
+      }
+    }, { passive: false });
+
+    noBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (result.classList.contains("show")) return;
+      evadeFromPoint(e.clientX || 0, e.clientY || 0);
+    });
+
+    yesBtn.addEventListener("pointerdown", stopPulseOnInteraction, { passive: true });
 
     yesBtn.addEventListener("click", () => {
-      arena.style.display = "none";
-      document.getElementById("hint").style.display = "none";
-      sub.textContent = "";
-      result.style.display = "block";
-
-      // cache-bust + encodage safe
-      const src = encodeURI(VIDEO_FILE) + "?v=" + Date.now();
-      vid.src = src;
-      // Force play (certaines plateformes bloquent si non muted)
-      vid.play().catch(()=>{});
+      stopPulseOnInteraction();
+      confettiBurst();
+      transitionToFinal();
+      videoError.style.display = "none";
+      vid.src = VIDEO_FILE;
+      vid.load();
+      setTimeout(tryPlayVideo, 260);
     });
 
-    window.addEventListener("load", () => {
-      randomPos(noBtn);
-      randomPos(maybeBtn);
+    playBtn.addEventListener("click", tryPlayVideo);
+
+    vid.addEventListener("play", () => {
+      playBtn.style.display = "none";
     });
-    window.addEventListener("resize", () => {
-      randomPos(noBtn);
-      randomPos(maybeBtn);
+
+    vid.addEventListener("error", () => {
+      videoError.style.display = "block";
+      playBtn.style.display = "none";
     });
+
+    window.addEventListener("load", setupInitialPositions);
+    window.addEventListener("resize", setupInitialPositions);
   </script>
 </body>
 </html>
