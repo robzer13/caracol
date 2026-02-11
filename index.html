@@ -305,14 +305,6 @@
       badTexts.forEach((el) => el.remove());
     }
 
-
-    // Keep only the canonical app card in the body, regardless of any stale injected markup.
-    (function enforceSingleBodyCard() {
-      const canonicalCard = document.getElementById("card");
-      if (!canonicalCard) return;
-      document.body.replaceChildren(canonicalCard);
-    })();
-
     const arena = document.getElementById("arena");
     const yesBtn = document.getElementById("yes");
     const noBtn = document.getElementById("no");
