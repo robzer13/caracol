@@ -2,189 +2,531 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Question importante</title>
   <style>
-    :root { --pink:#e91e63; --bg1:#ffd6e7; --bg2:#f7e8ff; }
-    * { box-sizing: border-box; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
-    body{
-      margin:0; min-height:100vh; display:grid; place-items:center;
-      background: radial-gradient(circle at top, var(--bg2), var(--bg1));
-      padding: 20px;
+    :root {
+      --bg-a: #ffe3ef;
+      --bg-b: #f5ebff;
+      --surface: rgba(255, 255, 255, 0.88);
+      --surface-border: rgba(20, 20, 20, 0.08);
+      --text: #1f1f24;
+      --muted: rgba(31, 31, 36, 0.62);
+      --pink: #e91e63;
+      --pink-2: #ff4f93;
+      --soft-gray: #ececf1;
+      --danger: #9f1f27;
+      --shadow: 0 24px 64px rgba(20, 20, 20, 0.14);
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-soft: cubic-bezier(0.25, 0.9, 0.3, 1);
     }
-    .card{
-      width:min(560px, 92vw);
-      background: rgba(255,255,255,0.88);
-      border: 1px solid rgba(0,0,0,0.06);
-      border-radius: 18px;
-      padding: 22px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.12);
-      text-align:center;
-      position: relative;
-    }
-    .icon{
-      width: 72px; height:72px; margin: 0 auto 10px;
-      border-radius: 50%;
-      display:grid; place-items:center;
-      background: rgba(233,30,99,0.12);
-      font-size: 34px;
-    }
-    h1{ font-size: 22px; margin: 8px 0 6px; font-weight: 750; }
-    p{ margin: 0 0 12px; color: rgba(0,0,0,0.65); }
 
-    .btn-area{
-      position: relative;
-      width: min(460px, 88vw);
-      height: 160px;
-      margin: 14px auto 0;
-    }
-    button{
-      border:0; cursor:pointer;
-      padding: 14px 22px;
-      border-radius: 999px;
-      font-weight: 750;
-      font-size: 16px;
-      box-shadow: 0 10px 22px rgba(0,0,0,0.10);
-      transition: transform 120ms ease;
-      user-select:none;
+    * {
+      box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
-      position:absolute;
-      top: 60px;
-    }
-    #yes{
-      background: var(--pink);
-      color:white;
-      left: 10px;
-      transform-origin: left center;
-      padding: 16px 26px;
-      font-size: 18px;
-    }
-    #no{
-      background: #e9e9e9;
-      color: #222;
-      right: 10px;
-    }
-    #maybe{
-      background: #f2f2f2;
-      color:#222;
-      left: 50%;
-      transform: translateX(-50%);
-      top: 10px;
-      padding: 12px 18px;
-      font-size: 14px;
     }
 
-    .hint{ margin-top: 10px; font-size: 12px; color: rgba(0,0,0,0.45); }
-
-    .result{
-      display:none;
-      margin-top: 12px;
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 50% -20%, var(--bg-b), var(--bg-a));
+      overflow: hidden;
+      user-select: none;
     }
-    .result h2{ margin: 6px 0 10px; }
-    video{
-      width: min(520px, 92vw);
+
+    .card {
+      position: relative;
+      width: min(620px, 95vw);
+      border-radius: 24px;
+      border: 1px solid var(--surface-border);
+      background: var(--surface);
+      backdrop-filter: blur(6px);
+      box-shadow: var(--shadow);
+      padding: 26px 22px 22px;
+      text-align: center;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    #confettiCanvas {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .icon {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 10px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: rgba(233, 30, 99, 0.12);
+      font-size: 32px;
+      transition: transform 340ms var(--ease-out);
+    }
+
+    #mainTitle {
+      margin: 8px 0 8px;
+      font-size: clamp(1.65rem, 3.4vw, 2rem);
+      line-height: 1.24;
+      letter-spacing: -0.012em;
+      font-weight: 780;
+      transition: transform 280ms var(--ease-out), opacity 280ms var(--ease-out);
+    }
+
+    #sub {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.03rem;
+      transition: opacity 240ms var(--ease-out);
+    }
+
+    .btn-area {
+      width: min(500px, 88vw);
+      height: 152px;
+      margin: 16px auto 0;
+      position: relative;
+      touch-action: none;
+    }
+
+    .btn {
+      position: absolute;
+      border: 0;
+      border-radius: 999px;
+      padding: 14px 24px;
+      min-width: 120px;
+      font-size: 1rem;
+      font-weight: 760;
+      line-height: 1;
+      cursor: pointer;
+      transition:
+        transform 220ms var(--ease-soft),
+        box-shadow 220ms var(--ease-soft),
+        background 200ms var(--ease-soft),
+        opacity 220ms var(--ease-soft);
+      will-change: transform, left, top;
+      box-shadow: 0 10px 24px rgba(16, 16, 16, 0.12);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px) scale(1.02);
+      box-shadow: 0 14px 30px rgba(16, 16, 16, 0.14);
+    }
+
+    .btn:active {
+      transform: translateY(0) scale(0.985);
+    }
+
+    .btn:focus-visible {
+      outline: 3px solid rgba(233, 30, 99, 0.28);
+      outline-offset: 2px;
+    }
+
+    #yes {
+      left: 20%;
+      top: 66px;
+      transform-origin: center;
+      color: #fff;
+      background: linear-gradient(135deg, var(--pink), var(--pink-2));
+    }
+
+    #no {
+      left: 62%;
+      top: 66px;
+      color: #25252a;
+      background: var(--soft-gray);
+    }
+
+    .yes-pulse {
+      animation: yesPulse 2.7s var(--ease-soft) infinite;
+    }
+
+    @keyframes yesPulse {
+      0%, 100% {
+        box-shadow: 0 10px 24px rgba(16, 16, 16, 0.12), 0 0 0 0 rgba(233, 30, 99, 0);
+      }
+      50% {
+        box-shadow: 0 16px 30px rgba(233, 30, 99, 0.25), 0 0 0 11px rgba(233, 30, 99, 0);
+      }
+    }
+
+    #hint {
+      margin: 6px 0 0;
+      color: rgba(31, 31, 36, 0.45);
+      font-size: 0.84rem;
+      transition: opacity 220ms var(--ease-out), transform 220ms var(--ease-out);
+    }
+
+    .fade-away {
+      opacity: 0;
+      transform: translateY(-10px);
+      pointer-events: none;
+    }
+
+    .result {
+      opacity: 0;
+      transform: translateY(14px);
+      pointer-events: none;
+      margin-top: 16px;
+      transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out);
+    }
+
+    .result.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .result h2 {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 5vw, 2.4rem);
+      line-height: 1.1;
+      letter-spacing: 0.01em;
+      color: #cd1e59;
+    }
+
+    #vid {
+      width: min(540px, 92vw);
       border-radius: 14px;
-      border: 1px solid rgba(0,0,0,0.08);
-      box-shadow: 0 14px 40px rgba(0,0,0,0.14);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.16);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 520ms var(--ease-out), transform 520ms var(--ease-out);
+    }
+
+    .result.show #vid {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #playBtn {
+      position: static;
+      display: none;
+      margin: 12px auto 0;
+      color: #fff;
+      background: var(--pink);
+    }
+
+    #videoError {
+      display: none;
+      margin: 10px 0 0;
+      color: var(--danger);
+      font-size: 0.84rem;
+    }
+
+    @media (max-width: 640px) {
+      .card { padding: 20px 14px 16px; border-radius: 20px; }
+      .btn-area { height: 146px; }
+      .btn { min-width: 112px; padding: 13px 20px; }
+      #yes, #no { top: 62px; }
+      #mainTitle { font-size: clamp(1.45rem, 7vw, 1.85rem); }
+      #sub { font-size: 0.98rem; }
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="icon">💘</div>
-    <h1>Joyeux anniversaire mi caracol, veux tu être ma valentine ?</h1>
+  <main class="card" id="card">
+    <canvas id="confettiCanvas" aria-hidden="true"></canvas>
+
+    <div class="icon" id="icon">💘</div>
+    <h1 id="mainTitle">Joyeux anniversaire mi caracol, veux tu être ma valentine ?</h1>
     <p id="sub">Réponds honnêtement (mais choisis bien).</p>
 
-    <div class="btn-area" id="arena">
-      <button id="yes">Oui</button>
-      <button id="no" aria-label="Non">Non</button>
-      <button id="maybe" aria-label="Je sais pas">Je sais pas</button>
-    </div>
+    <section class="btn-area" id="arena" aria-label="Choix de réponse">
+      <button class="btn yes-pulse" id="yes" aria-label="Oui">Oui</button>
+      <button class="btn" id="no" aria-label="Non">Non</button>
+    </section>
 
-    <div class="hint" id="hint">Astuce : “Non” et “Je sais pas” sont… capricieux.</div>
+    <p id="hint">Astuce : “Non” est… capricieux.</p>
 
-    <div class="result" id="result">
-      <h2>YAY! 🎉</h2>
-      <video id="vid" playsinline autoplay muted loop controls></video>
-      <div class="hint">Si tu veux le son : active le volume dans le lecteur.</div>
-    </div>
-  </div>
+    <section class="result" id="result" aria-live="polite">
+      <h2>VAMOOOOOOS! 🎉</h2>
+      <video id="vid" src="valentine.mp4" controls playsinline preload="metadata" muted autoplay loop></video>
+      <button class="btn" id="playBtn" type="button">▶ Lancer la vidéo</button>
+      <p id="videoError">Impossible de charger la vidéo. Vérifie que l’URL <code>valentine.mp4</code> est correcte.</p>
+    </section>
+  </main>
 
   <script>
     const arena = document.getElementById("arena");
-    const noBtn  = document.getElementById("no");
-    const maybeBtn = document.getElementById("maybe");
     const yesBtn = document.getElementById("yes");
-    const sub    = document.getElementById("sub");
+    const noBtn = document.getElementById("no");
+    const mainTitle = document.getElementById("mainTitle");
+    const sub = document.getElementById("sub");
+    const hint = document.getElementById("hint");
     const result = document.getElementById("result");
-    const vid    = document.getElementById("vid");
+    const vid = document.getElementById("vid");
+    const playBtn = document.getElementById("playBtn");
+    const videoError = document.getElementById("videoError");
+    const confettiCanvas = document.getElementById("confettiCanvas");
+    const card = document.getElementById("card");
+    const icon = document.getElementById("icon");
 
-    // Nom de fichier vidéo (ASCII recommandé pour éviter les soucis iPhone/URL)
     const VIDEO_FILE = "valentine.mp4";
 
     let tries = 0;
+    let pulseStopped = false;
+    let noCurrent = { x: 0, y: 0 };
+    let noTarget = { x: 0, y: 0 };
+    let noAnimating = false;
+    let wiggleUntil = 0;
 
-    function randomPos(btn){
+    function clamp(v, min, max) {
+      return Math.max(min, Math.min(max, v));
+    }
+
+    function lerp(a, b, t) {
+      return a + (b - a) * t;
+    }
+
+    function stopYesPulse() {
+      if (!pulseStopped) {
+        pulseStopped = true;
+        yesBtn.classList.remove("yes-pulse");
+      }
+    }
+
+    function setYesScale() {
+      const scale = 1 + Math.min(tries * 0.022, 0.15);
+      yesBtn.style.transform = `scale(${scale.toFixed(3)})`;
+    }
+
+    function getArenaMetrics() {
+      const areaRect = arena.getBoundingClientRect();
+      const noRect = noBtn.getBoundingClientRect();
+      return {
+        width: areaRect.width,
+        height: areaRect.height,
+        btnW: noRect.width,
+        btnH: noRect.height,
+      };
+    }
+
+    function setupInitialPositions() {
+      const areaRect = arena.getBoundingClientRect();
+      const yesRect = yesBtn.getBoundingClientRect();
+      const noRect = noBtn.getBoundingClientRect();
+
+      const yesX = clamp(areaRect.width * 0.30 - yesRect.width / 2, 12, areaRect.width - yesRect.width - 12);
+      const noX = clamp(areaRect.width * 0.72 - noRect.width / 2, 12, areaRect.width - noRect.width - 12);
+
+      yesBtn.style.left = `${yesX}px`;
+      yesBtn.style.top = "66px";
+
+      noCurrent.x = noX;
+      noCurrent.y = 66;
+      noTarget.x = noX;
+      noTarget.y = 66;
+      noBtn.style.left = `${noX}px`;
+      noBtn.style.top = "66px";
+    }
+
+    function setTargetPosition(referenceX, referenceY) {
       const pad = 10;
-      const a = arena.getBoundingClientRect();
-      const b = btn.getBoundingClientRect();
-      const maxX = a.width  - b.width  - pad;
-      const maxY = a.height - b.height - pad;
+      const { width, height, btnW, btnH } = getArenaMetrics();
 
-      const x = Math.max(pad, Math.floor(Math.random() * maxX));
-      const y = Math.max(pad, Math.floor(Math.random() * maxY));
+      const centerX = noCurrent.x + btnW / 2;
+      const centerY = noCurrent.y + btnH / 2;
+      const dirX = centerX - referenceX;
+      const dirY = centerY - referenceY;
+      const norm = Math.hypot(dirX, dirY) || 1;
 
-      btn.style.left = x + "px";
-      btn.style.top  = y + "px";
-      btn.style.right = "auto";
-      btn.style.transform = "none";
+      const push = 84 + Math.random() * 42;
+      const jitterX = (Math.random() - 0.5) * 30;
+      const jitterY = (Math.random() - 0.5) * 24;
+
+      const nextX = centerX + (dirX / norm) * push + jitterX - btnW / 2;
+      const nextY = centerY + (dirY / norm) * push + jitterY - btnH / 2;
+
+      noTarget.x = clamp(nextX, pad, width - btnW - pad);
+      noTarget.y = clamp(nextY, pad, height - btnH - pad);
+      wiggleUntil = performance.now() + 220;
+
+      if (!noAnimating) {
+        noAnimating = true;
+        requestAnimationFrame(moveNoSmooth);
+      }
     }
 
-    function growYes() {
-      const scale = 1 + Math.min(tries, 10) * 0.09;
-      yesBtn.style.transform = `scale(${scale})`;
+    function moveNoSmooth() {
+      const dx = noTarget.x - noCurrent.x;
+      const dy = noTarget.y - noCurrent.y;
+      noCurrent.x = lerp(noCurrent.x, noTarget.x, 0.2);
+      noCurrent.y = lerp(noCurrent.y, noTarget.y, 0.2);
+
+      const now = performance.now();
+      const wiggle = now < wiggleUntil ? Math.sin(now * 0.04) * 2 : 0;
+      noBtn.style.left = `${noCurrent.x}px`;
+      noBtn.style.top = `${noCurrent.y}px`;
+      noBtn.style.transform = `rotate(${wiggle.toFixed(2)}deg)`;
+
+      if (Math.abs(dx) > 0.7 || Math.abs(dy) > 0.7) {
+        requestAnimationFrame(moveNoSmooth);
+      } else {
+        noCurrent.x = noTarget.x;
+        noCurrent.y = noTarget.y;
+        noBtn.style.left = `${noCurrent.x}px`;
+        noBtn.style.top = `${noCurrent.y}px`;
+        noBtn.style.transform = "rotate(0deg)";
+        noAnimating = false;
+      }
     }
 
-    function evade(btn, e){
-      if (e) e.preventDefault();
-      tries++;
-      randomPos(btn);
-      growYes();
+    function evadeFromPoint(clientX, clientY) {
+      if (result.classList.contains("show")) return;
+      stopYesPulse();
+      tries += 1;
+      setYesScale();
+      setTargetPosition(clientX, clientY);
+
       if (tries === 2) sub.textContent = "Allez… réfléchis 😇";
-      if (tries === 4) sub.textContent = "Objectivement, “Oui” est la meilleure réponse.";
-      if (tries === 7) sub.textContent = "Ok, je rends le bouton Oui encore plus facile.";
+      if (tries === 5) sub.textContent = "Objectivement, “Oui” est la bonne réponse.";
+      if (tries === 8) sub.textContent = "Le “Oui” est juste là 👀";
     }
 
-    ["mouseenter","mouseover","touchstart","pointerdown"].forEach(evt => {
-      noBtn.addEventListener(evt, (e) => evade(noBtn, e), { passive:false });
-      maybeBtn.addEventListener(evt, (e) => evade(maybeBtn, e), { passive:false });
+    function confettiBurst() {
+      const ctx = confettiCanvas.getContext("2d", { alpha: true });
+      const rect = card.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+
+      confettiCanvas.width = Math.floor(rect.width * dpr);
+      confettiCanvas.height = Math.floor(rect.height * dpr);
+      confettiCanvas.style.width = `${rect.width}px`;
+      confettiCanvas.style.height = `${rect.height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const colors = ["#e91e63", "#ff8eb9", "#ffd166", "#8ce99a", "#7bdff2", "#c77dff"];
+      const parts = Array.from({ length: 84 }, () => ({
+        x: rect.width * (0.35 + Math.random() * 0.3),
+        y: rect.height * 0.28,
+        w: 4 + Math.random() * 4,
+        h: 7 + Math.random() * 7,
+        vx: (Math.random() - 0.5) * 7,
+        vy: -4.8 - Math.random() * 5,
+        g: 0.18 + Math.random() * 0.1,
+        rot: Math.random() * Math.PI,
+        vr: (Math.random() - 0.5) * 0.2,
+        life: 65 + Math.random() * 28,
+        color: colors[Math.floor(Math.random() * colors.length)],
+      }));
+
+      let frame = 0;
+      function tick() {
+        ctx.clearRect(0, 0, rect.width, rect.height);
+        for (const p of parts) {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += p.g;
+          p.vx *= 0.992;
+          p.rot += p.vr;
+          p.life -= 1;
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.globalAlpha = Math.max(0, p.life / 90);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        }
+
+        frame += 1;
+        if (frame < 95) requestAnimationFrame(tick);
+        else ctx.clearRect(0, 0, rect.width, rect.height);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    function transitionToFinal() {
+      arena.classList.add("fade-away");
+      hint.classList.add("fade-away");
+      icon.style.transform = "scale(1.06)";
+      mainTitle.textContent = "Je t’aime mi pulgitilla";
+      sub.textContent = "";
+
+      setTimeout(() => {
+        arena.style.display = "none";
+        hint.style.display = "none";
+        result.classList.add("show");
+      }, 220);
+    }
+
+    function tryPlayVideo() {
+      vid.play().then(() => {
+        playBtn.style.display = "none";
+      }).catch(() => {
+        playBtn.style.display = "inline-block";
+      });
+    }
+
+    arena.addEventListener("pointermove", (event) => {
+      const noRect = noBtn.getBoundingClientRect();
+      const dx = event.clientX - (noRect.left + noRect.width / 2);
+      const dy = event.clientY - (noRect.top + noRect.height / 2);
+      if (Math.hypot(dx, dy) < 118) {
+        evadeFromPoint(event.clientX, event.clientY);
+      }
+    }, { passive: true });
+
+    noBtn.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      evadeFromPoint(event.clientX, event.clientY);
+    }, { passive: false });
+
+    noBtn.addEventListener("pointerenter", (event) => {
+      evadeFromPoint(event.clientX, event.clientY);
     });
 
-    // Au cas où un click passe
-    noBtn.addEventListener("click", (e) => evade(noBtn, e));
-    maybeBtn.addEventListener("click", (e) => evade(maybeBtn, e));
+    noBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      evadeFromPoint(event.clientX || 0, event.clientY || 0);
+    });
+
+    arena.addEventListener("touchstart", (event) => {
+      const t = event.touches[0];
+      if (!t) return;
+      const noRect = noBtn.getBoundingClientRect();
+      const dx = t.clientX - (noRect.left + noRect.width / 2);
+      const dy = t.clientY - (noRect.top + noRect.height / 2);
+      if (Math.hypot(dx, dy) < 126) {
+        event.preventDefault();
+        evadeFromPoint(t.clientX, t.clientY);
+      }
+    }, { passive: false });
+
+    yesBtn.addEventListener("pointerdown", stopYesPulse, { passive: true });
 
     yesBtn.addEventListener("click", () => {
-      arena.style.display = "none";
-      document.getElementById("hint").style.display = "none";
-      sub.textContent = "";
-      result.style.display = "block";
-
-      // cache-bust + encodage safe
-      const src = encodeURI(VIDEO_FILE) + "?v=" + Date.now();
-      vid.src = src;
-      // Force play (certaines plateformes bloquent si non muted)
-      vid.play().catch(()=>{});
+      stopYesPulse();
+      confettiBurst();
+      transitionToFinal();
+      videoError.style.display = "none";
+      vid.src = VIDEO_FILE;
+      vid.load();
+      setTimeout(tryPlayVideo, 250);
     });
 
-    window.addEventListener("load", () => {
-      randomPos(noBtn);
-      randomPos(maybeBtn);
+    playBtn.addEventListener("click", tryPlayVideo);
+
+    vid.addEventListener("play", () => {
+      playBtn.style.display = "none";
     });
-    window.addEventListener("resize", () => {
-      randomPos(noBtn);
-      randomPos(maybeBtn);
+
+    vid.addEventListener("error", () => {
+      videoError.style.display = "block";
+      playBtn.style.display = "none";
     });
+
+    window.addEventListener("load", setupInitialPositions);
+    window.addEventListener("resize", setupInitialPositions);
   </script>
 </body>
 </html>
