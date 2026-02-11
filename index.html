@@ -87,6 +87,20 @@
       border: 1px solid rgba(0,0,0,0.08);
       box-shadow: 0 14px 40px rgba(0,0,0,0.14);
     }
+    .play-button {
+      position: static;
+      display: none;
+      margin: 12px auto 0;
+      background: var(--pink);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.10);
+    }
+    .error {
+      display: none;
+      margin-top: 10px;
+      color: #9b1c1c;
+      font-size: 13px;
+    }
   </style>
 </head>
 <body>
@@ -104,8 +118,10 @@
     <div class="hint" id="hint">Astuce : “Non” et “Je sais pas” sont… capricieux.</div>
 
     <div class="result" id="result">
-      <h2>YAY! 🎉</h2>
-      <video id="vid" playsinline autoplay muted loop controls></video>
+      <h2>VAMOOOOOOS! 🎉</h2>
+      <video id="vid" src="valentine.mp4" controls playsinline preload="metadata" muted autoplay loop></video>
+      <button class="play-button" id="playBtn" type="button">▶ Lancer la vidéo</button>
+      <p class="error" id="videoError">Impossible de charger la vidéo. Vérifie que l'URL <code>valentine.mp4</code> est correcte et disponible.</p>
       <div class="hint">Si tu veux le son : active le volume dans le lecteur.</div>
     </div>
   </div>
@@ -115,11 +131,12 @@
     const noBtn  = document.getElementById("no");
     const maybeBtn = document.getElementById("maybe");
     const yesBtn = document.getElementById("yes");
-    const sub    = document.getElementById("sub");
+    const sub = document.getElementById("sub");
     const result = document.getElementById("result");
-    const vid    = document.getElementById("vid");
+    const vid = document.getElementById("vid");
+    const playBtn = document.getElementById("playBtn");
+    const videoError = document.getElementById("videoError");
 
-    // Nom de fichier vidéo (ASCII recommandé pour éviter les soucis iPhone/URL)
     const VIDEO_FILE = "valentine.mp4";
 
     let tries = 0;
@@ -128,14 +145,14 @@
       const pad = 10;
       const a = arena.getBoundingClientRect();
       const b = btn.getBoundingClientRect();
-      const maxX = a.width  - b.width  - pad;
+      const maxX = a.width - b.width - pad;
       const maxY = a.height - b.height - pad;
 
       const x = Math.max(pad, Math.floor(Math.random() * maxX));
       const y = Math.max(pad, Math.floor(Math.random() * maxY));
 
       btn.style.left = x + "px";
-      btn.style.top  = y + "px";
+      btn.style.top = y + "px";
       btn.style.right = "auto";
       btn.style.transform = "none";
     }
@@ -155,32 +172,52 @@
       if (tries === 7) sub.textContent = "Ok, je rends le bouton Oui encore plus facile.";
     }
 
-    ["mouseenter","mouseover","touchstart","pointerdown"].forEach(evt => {
+    async function tryPlayVideo() {
+      try {
+        await vid.play();
+      } catch {
+        playBtn.style.display = "inline-block";
+      }
+    }
+
+    ["mouseenter","mouseover","touchstart","pointerdown"].forEach((evt) => {
       noBtn.addEventListener(evt, (e) => evade(noBtn, e), { passive:false });
       maybeBtn.addEventListener(evt, (e) => evade(maybeBtn, e), { passive:false });
     });
 
-    // Au cas où un click passe
     noBtn.addEventListener("click", (e) => evade(noBtn, e));
     maybeBtn.addEventListener("click", (e) => evade(maybeBtn, e));
+
+    playBtn.addEventListener("click", () => {
+      tryPlayVideo();
+    });
+
+    vid.addEventListener("play", () => {
+      playBtn.style.display = "none";
+    });
+
+    vid.addEventListener("error", () => {
+      videoError.style.display = "block";
+      playBtn.style.display = "none";
+    });
 
     yesBtn.addEventListener("click", () => {
       arena.style.display = "none";
       document.getElementById("hint").style.display = "none";
       sub.textContent = "";
       result.style.display = "block";
+      videoError.style.display = "none";
 
-      // cache-bust + encodage safe
-      const src = encodeURI(VIDEO_FILE) + "?v=" + Date.now();
-      vid.src = src;
-      // Force play (certaines plateformes bloquent si non muted)
-      vid.play().catch(()=>{});
+      vid.src = VIDEO_FILE;
+      vid.load();
+      tryPlayVideo();
     });
 
     window.addEventListener("load", () => {
       randomPos(noBtn);
       randomPos(maybeBtn);
     });
+
     window.addEventListener("resize", () => {
       randomPos(noBtn);
       randomPos(maybeBtn);
