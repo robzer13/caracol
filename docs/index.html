@@ -269,6 +269,7 @@
     let hasAccepted = false;
     let noPath = [];
     let noPathIndex = 0;
+    let lastTryAt = 0;
 
     function clamp(v, min, max) {
       return Math.max(min, Math.min(max, v));
@@ -381,13 +382,17 @@
 
     function moveNoAway(clientX, clientY) {
       stopYesPulse();
-      tries += 1;
-      setYesScale();
+      const now = performance.now();
+      if (now - lastTryAt > 680) {
+        tries += 1;
+        lastTryAt = now;
+        setYesScale();
+        if (tries === 3) sub.textContent = "Allez hop, esquive de la loute 🦦";
+        if (tries === 8) sub.textContent = "Allez… réfléchis 😇";
+        if (tries === 14) sub.textContent = "Objectivement, “Oui” est la bonne réponse.";
+        if (tries === 22) sub.textContent = "Tu sais ce qu’il faut cliquer 👀";
+      }
       keepNoMoving();
-
-      if (tries === 2) sub.textContent = "Allez… réfléchis 😇";
-      if (tries === 5) sub.textContent = "Objectivement, “Oui” est la bonne réponse.";
-      if (tries === 8) sub.textContent = "Tu sais ce qu’il faut cliquer 👀";
     }
 
     function evadeFromPoint(clientX, clientY) {
