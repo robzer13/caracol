@@ -211,10 +211,6 @@
       color: #9f1f27;
     }
 
-    body > main:not(#card) {
-      display: none !important;
-    }
-
     @media (max-width: 640px) {
       .card { padding: 20px 14px 16px; }
       .btn-area { height: 146px; }
@@ -246,40 +242,6 @@
   </main>
 
   <script>
-    // Hard cleanup in case old duplicated markup is still present after a bad deploy/cache.
-    (function cleanupDuplicateDom() {
-      const cards = Array.from(document.querySelectorAll("main.card"));
-      if (cards.length > 1) {
-        cards.slice(0, -1).forEach((cardNode) => cardNode.remove());
-      }
-
-      const legacyMaybeButtons = Array.from(document.querySelectorAll("button"))
-        .filter((btn) => btn.textContent && btn.textContent.trim().toLowerCase() === "je sais pas");
-      legacyMaybeButtons.forEach((btn) => {
-        const legacyContainer = btn.closest("main, section, article, .card, div");
-        if (legacyContainer && legacyContainer.id !== "card") {
-          legacyContainer.remove();
-        } else {
-          btn.remove();
-        }
-      });
-
-      const legacyHints = Array.from(document.querySelectorAll("p, div, span"))
-        .filter((el) => {
-          const text = (el.textContent || "").toLowerCase();
-          return text.includes("astuce") || text.includes("je rends le bouton oui");
-        });
-      legacyHints.forEach((el) => {
-        if (el.closest("#card")) return;
-        const legacyContainer = el.closest("main, section, article, .card, div");
-        if (legacyContainer && legacyContainer.id !== "card") {
-          legacyContainer.remove();
-        } else {
-          el.remove();
-        }
-      });
-    })();
-
     const arena = document.getElementById("arena");
     const yesBtn = document.getElementById("yes");
     const noBtn = document.getElementById("no");
